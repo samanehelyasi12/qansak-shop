@@ -1,52 +1,81 @@
+import Link from "next/link";
+import { Leaf, Gift, Heart, Bike } from "lucide-react";
 import Container from "@/components/ui/Container";
 
 const rules = [
   {
-    icon: "🛡️",
-    title: "ضمانت کیفیت",
-    description: "تمامی محصولات با بهترین مواد اولیه و تحت نظارت کیفیت تهیه می‌شوند",
+    icon: Leaf,
+    title: "مواد اولیه تازه و طبیعی",
   },
   {
-    icon: "🚚",
-    title: "تحویل سریع",
-    description: "سفارشات در محدوده تهران در کمتر از ۳ ساعت تحویل داده می‌شوند",
+    icon: Gift,
+    title: "بدون مواد نگهدارنده",
   },
   {
-    icon: "🔄",
-    title: "استبدال آسان",
-    description: "در صورت عدم رضایت، تا ۲ ساعت بعد از تحویل قابل استبدال است",
+    icon: Heart,
+    title: "دستساز با عشق",
   },
   {
-    icon: "💬",
-    title: "پشتیبانی ۲۴/۷",
-    description: "تیم پشتیبانی ما در همه ساعات برای پاسخگویی به شما در دسترس است",
+    icon: Bike,
+    title: "ارسال سریع و مطمئن",
   },
 ];
 
 export default function Rules() {
   return (
-    <section className="py-16 bg-white" aria-labelledby="rules-title">
-      <Container>
-        <div className="mb-12 text-center">
-          <h2 id="rules-title" className="text-2xl font-bold text-cocoa sm:text-3xl">
-            چرا قندک؟
-          </h2>
+    <section className="px-1 py-3 sm:px-3 sm:py-8 lg:px-4" aria-labelledby="rules-title">
+      <div className="relative mx-auto max-w-screen-2xl overflow-hidden rounded-3xl">
+        {/* عکس بک‌گراند - عرض و ارتفاع کامل کارت، با نسبت ابعاد ثابت */}
+        <img
+          src="/images/decor/why-qandak.webp"
+          alt=""
+          aria-hidden="true"
+          className="h-full min-h-[220px] w-full object-cover sm:min-h-[260px]"
+        />
+
+        {/* محتوا روی عکس */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Container>
+            <div className="flex flex-col items-center gap-6 lg:flex-row-reverse lg:items-center lg:justify-center lg:gap-16">
+              {/* متن - سمت راست */}
+              <div className="w-full max-w-xs mr-[890px] absolute text-center lg:text-right">
+                <h2 id="rules-title" className="text-xl font-bold leading-snug text-cocoa sm:text-2xl lg:text-3xl">
+                  طعم عشق را
+                  <br />
+                  در قندک تجربه کنید
+                </h2>
+                <p className="mt-3 hidden text-sm leading-7 text-cocoa/70 sm:block">
+                  ما در قندک با انتخاب بهترین مواد اولیه و دستورهای ویژه شیرینی‌هایی درست می‌کنیم که به لحظاتتان می‌آورند
+                </p>
+                <Link
+                  href="/about"
+                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-berry px-5 py-2.5 text-xs font-bold text-white transition hover:bg-berry/90 sm:text-sm"
+                >
+                  درباره ما بیشتر بدانید
+                </Link>
+              </div>
+
+              {/* کارت‌های آیکون - سمت چپ */}
+              <div className="hidden gap-3 sm:flex ml-[900px] absolute sm:gap-4">
+                {rules.map((rule) => {
+                  const Icon = rule.icon;
+                  return (
+                    <div
+                      key={rule.title}
+                      className="flex w-20 flex-col items-center justify-center gap-2 rounded-2xl bg-white/60 p-3 text-center shadow-sm backdrop-blur-sm sm:w-24 sm:p-4"
+                    >
+                      <Icon className="h-6 w-6 text-berry sm:h-7 sm:w-7" strokeWidth={1.5} />
+                      <span className="text-[11px] font-medium leading-4 text-cocoa sm:text-xs">
+                        {rule.title}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Container>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {rules.map((rule) => (
-            <article
-              key={rule.title}
-              className="text-center p-6 rounded-xl bg-cream/50 border border-cream"
-            >
-              <span className="mb-4 block text-4xl" role="img" aria-hidden="true">
-                {rule.icon}
-              </span>
-              <h3 className="mb-2 font-bold text-cocoa">{rule.title}</h3>
-              <p className="text-sm text-cocoa/70">{rule.description}</p>
-            </article>
-          ))}
-        </div>
-      </Container>
+      </div>
     </section>
   );
 }

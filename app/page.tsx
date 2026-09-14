@@ -1,11 +1,12 @@
 import Hero from "@/components/home/Hero";
 import Categories from "@/components/home/Categories";
 import BestSellers from "@/components/home/BestSellers";
+import MembershipBanner from "@/components/home/MembershipBanner";
 import NewProducts from "@/components/home/NewProducts";
-import OrderSteps from "@/components/home/OrderSteps";
-import CustomerReviews from "@/components/home/CustomerReviews";
 import Rules from "@/components/home/Rules";
+import CustomerReviews from "@/components/home/CustomerReviews";
 import FAQ from "@/components/home/FAQ";
+
 
 export default function HomePage() {
   return (
@@ -13,10 +14,11 @@ export default function HomePage() {
       <Hero />
       <Categories />
       <BestSellers />
+      <MembershipBanner />
       <NewProducts />
-      <OrderSteps />
+       <Rules />
+      
       <CustomerReviews />
-      <Rules />
       <FAQ />
     </>
   );

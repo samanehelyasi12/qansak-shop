@@ -79,12 +79,13 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white/70 text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ShoppingBag className="h-5 w-5" />
+          
           </button>
 
           <button
             type="button"
             disabled={!product.inStock}
-            className="flex h-11 flex-1 items-center justify-center rounded-full bg-qandek-strawberry text-sm font-bold text-white transition hover:bg-qandek-strawberry/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-white/30"
+            className="flex h-7 flex-1 items-center justify-center rounded-full bg-qandek-strawberry text-sm font-bold text-white transition hover:bg-qandek-strawberry/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-white/30"
           >
             {product.inStock ? "افزودن به سبد" : "ناموجود"}
           </button>

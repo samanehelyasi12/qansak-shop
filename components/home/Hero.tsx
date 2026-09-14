@@ -7,13 +7,12 @@ import HeaderDrip from "../layout/HeaderDrip";
 
 export default function Hero() {
   return (
-    <section dir="rtl" className="relative  bg-slate-50">
+    <section dir="rtl" className="relative bg-slate-50">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-10 px-6 py-16 md:flex-row md:py-19">
-        {/* Text column — sits on the RIGHT because dir="rtl" and this is the first child */}
+        {/* Text column — سمت راست */}
         <div className="relative w-full md:w-1/2">
-          {/* decorative outlined heart, far edge */}
           <svg
-            className="absolute -right-2 top-24 h-6 w-6 text-berry/60 mr-[380px] mt-[-50px]"
+            className="absolute -right-2 top-24 h-6 w-6 text-berry/60 mr-[380px] mt-[-50px] animate-fade-up [animation-delay:0.1s]"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -22,10 +21,9 @@ export default function Hero() {
             <path d="M12 21s-7.5-4.6-10-9.3C.5 8.1 2.3 4.5 6 4a5 5 0 0 1 6 2.5A5 5 0 0 1 18 4c3.7.5 5.5 4.1 4 7.7-2.5 4.7-10 9.3-10 9.3Z" />
           </svg>
 
-          <h1 className="text-4xl font-bold leading-tight text-cocoa sm:text-5xl">
+          <h1 className="text-4xl font-bold leading-tight text-cocoa sm:text-5xl animate-fade-up [animation-delay:0.15s]">
             <span className="relative inline-block mr-[180px] mb-2 text-3xl">
               هر روز، یک
-              {/* small sparkle marks beside the first line */}
             </span>
             <br />
             <span className="text-berry mr-[120px] text-1xl ">تکه خوشحالی</span>
@@ -35,11 +33,10 @@ export default function Hero() {
             alt="khat"
             width={60}
             height={60}
-            className="mt-[-120px] absolute mr-[130px]"
+            className="mt-[-120px] absolute mr-[130px] animate-fade-up [animation-delay:0.35s]"
           />
 
-          {/* divider with a small heart in the middle */}
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-4 flex items-center gap-3 animate-fade-up [animation-delay:0.3s]">
             <Image
               src="/images/products/heart.webp"
               alt="heart"
@@ -49,14 +46,15 @@ export default function Hero() {
             />
           </div>
 
-          <p className="mt-4 mr-[80px] max-w-md text-base leading-8 text-cocoa/70">
+          <p className="mt-4 mr-[100px] max-w-md text-base leading-8 text-cocoa/70 animate-fade-up [animation-delay:0.4s]">
             شیرینی‌های خوش‌طعم و تازه با بهترین مواد اولیه
             <br />
-            <span className="mr-[70px]"> سفارش آنلاین، لذت همیشه</span>
+            <span className="mr-[50px]"> سفارش آنلاین، لذت همیشه</span>
           </p>
 
-          <div className="mt-8 mr-[130px] flex items-center gap-2">
-            <span className="text-lg  font-bold text-berry">سفارش دهید</span>
+          {/* نشان سفارش‌دهی + متن + خط‌چین با فلش */}
+          <div className="mt-8 mr-[160px] flex items-center gap-2 animate-fade-up [animation-delay:0.5s]">
+            <span className="text-lg font-bold text-berry">سفارش دهید</span>
 
             <svg
               width="56"
@@ -81,6 +79,7 @@ export default function Hero() {
                 fill="none"
               />
             </svg>
+
             <Link href="/products" aria-label="مشاهده همه محصولات">
               <img
                 src="/images/hero/order-badge.webp"
@@ -91,8 +90,8 @@ export default function Hero() {
           </div>
 
           {/* feature row */}
-          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 text-sm text-cocoa/80">
-            <div className="flex items-center gap-2  border border-dashed border-berry/90 rounded-full px-4 py-2">
+          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 text-sm text-cocoa/80 animate-fade-up [animation-delay:0.6s]">
+            <div className="flex items-center gap-2 border border-dashed border-berry/90 rounded-full px-4 py-2">
               <span>مواد اولیه تازه</span>
               <svg
                 className="h-5 w-5 text-pistachio"
@@ -105,7 +104,7 @@ export default function Hero() {
                 <path d="M12 21c4-1 8-5 8-11-5 0-9 2-10 6" />
               </svg>
             </div>
-            <div className="flex items-center gap-2  border border-dashed border-berry/90 rounded-full px-4 py-2">
+            <div className="flex items-center gap-2 border border-dashed border-berry/90 rounded-full px-4 py-2">
               <span>ارسال سریع</span>
               <svg
                 className="h-5 w-5 text-caramel"
@@ -137,16 +136,15 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Image column — sits on the LEFT because it's the second child under dir="rtl" */}
         {/* Image column — سمت چپ */}
-        <div className="relative w-full md:w-1/2 ">
+        <div className="relative w-full md:w-1/2 animate-fade-scale [animation-delay:0.2s]">
           <div className="relative mx-auto aspect-square max-w-md">
-            {/* blob background */}
             <div className="absolute inset-0 scale-110 rounded-[45%_55%_60%_40%/55%_45%_55%_45%] bg-pink-100" />
             <CakeCarousel />
           </div>
         </div>
       </div>
+
       <HeaderDrip />
     </section>
   );

@@ -1,16 +1,30 @@
+import Container from "@/components/ui/Container";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { getNewProducts } from "@/data/products";
-import ProductSection from "./ProductSection";
+import ProductCardStack from "@/components/product/ProductCardStack";
+import ScrollReveal from "@/components/ui/ScrollReveal";
+import CurvedBottomBackground from "./CurvedBottomBackground";
 
 export default function NewProducts() {
   const products = getNewProducts();
 
+  if (products.length === 0) return null;
+
   return (
-    <ProductSection
-      title="محصولات جدید"
-      subtitle="تازه‌ترین добавات به منوی قندک"
-      products={products}
-      viewAllHref="/categories/pastries"
-      viewAllLabel="همه جدیدها"
-    />
+    <section className="relative overflow-hidden py-16">
+      <CurvedBottomBackground />
+      <Container>
+        <SectionHeader
+          title="محصولات جدید"
+          subtitle="تازه‌ترین‌های قندک رو از دست نده"
+          actionLabel="مشاهده همه"
+          actionHref="/products"
+        />
+
+        <ScrollReveal>
+          <ProductCardStack products={products} />
+        </ScrollReveal>
+      </Container>
+    </section>
   );
 }
