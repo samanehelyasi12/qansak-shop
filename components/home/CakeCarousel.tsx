@@ -44,8 +44,8 @@ function roleStyle(role: Role, isMobile: boolean): React.CSSProperties {
         filter: "blur(0px)",
         opacity: 1,
         zIndex: 20,
-        height: isMobile ? "58%" : "75%",
-        bottom: isMobile ? "30%" : "15%",
+        height: isMobile ? "78%" : "75%",
+        bottom: isMobile ? "10%" : "15%",
       };
     case "left":
       return {
@@ -151,9 +151,20 @@ export default function CakeCarousel() {
 
       {/* nav buttons */}
       <div
-        className="absolute bottom-6 ml-28 mb-[-38px] sm:bottom-10 sm:left-8 flex gap-3"
-        style={{ zIndex: 40 }}
-      >
+  className="absolute bottom-6 ml-28 mb-[-38px] sm:bottom-10 sm:left-8 flex gap-3"
+  style={{
+    zIndex: 40,
+    ...(isMobile
+      ? {
+          left: "45%",
+          marginLeft: 0,
+          bottom: "2rem",
+          marginBottom: 0,
+          transform: "translateX(-50%)",
+        }
+      : {}),
+  }}
+>
         <button
           type="button"
           aria-label="تصویر قبلی"
@@ -177,7 +188,7 @@ export default function CakeCarousel() {
           type="button"
           aria-label="تصویر بعدی"
           onClick={() => navigate("next")}
-          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 flex items-center justify-center transition-[transform,background-color] duration-150 hover:scale-105"
+          className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-2 flex items-center justify-center transition-[transform,background-color] duration-150 hover:scale-105"
           style={{
             borderColor: "rgba(0,0,0,0.25)",
             color: "#3a3a3a",

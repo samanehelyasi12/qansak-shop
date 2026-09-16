@@ -46,7 +46,7 @@ export default function Categories() {
               src="/images/decor/ribbon-left.png"
               alt=""
               aria-hidden="true"
-              className="h-8 shrink-0 absolute z-10 mr-48 sm:h-11"
+              className="absolute z-10 h-8 shrink-0 mr-36 sm:h-11 sm:mr-48"
             />
             <h2
               id="categories-title"
@@ -58,7 +58,7 @@ export default function Categories() {
               src="/images/decor/ribbon-right.webp"
               alt=""
               aria-hidden="true"
-              className="h-8 absolute shrink-0 sm:h-11 ml-44"
+              className="absolute h-8 shrink-0 ml-36 sm:h-11 sm:ml-44"
             />
           </div>
           <p className="mt-3 text-cocoa/70">

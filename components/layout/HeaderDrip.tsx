@@ -1,6 +1,6 @@
 export default function HeaderDrip() {
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-[-40px] z-20">
+    <div className="pointer-events-none absolute inset-x-0 bottom-[-20px] sm:bottom-[-40px] z-20">
       <svg
         viewBox="0 0 1440 60"
         preserveAspectRatio="none"

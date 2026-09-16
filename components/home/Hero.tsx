@@ -12,7 +12,7 @@ export default function Hero() {
         {/* Text column — سمت راست */}
         <div className="relative w-full lg:w-1/2">
           <svg
-            className="absolute -right-2 top-24 h-6 w-6 text-berry/60 mr-[380px] mt-[-50px] animate-fade-up [animation-delay:0.1s]"
+            className="absolute -right-2 top-24 h-6 w-6 text-berry/60 mr-[380px] mt-[-50px]  animate-fade-up [animation-delay:0.1s]"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -143,8 +143,8 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* ===================== نسخه موبایل و تبلت (زیر lg) - ساده و وسط‌چین ===================== */}
-      <div className="flex flex-col items-center gap-6 px-6 py-10 text-center lg:hidden">
+      {/* ===================== نسخه موبایل و تبلت (زیر lg) ===================== */}
+      <div className="flex flex-col items-center gap-4 px-6 py-10 text-center lg:hidden">
         <div className="relative w-full max-w-sm animate-fade-scale [animation-delay:0.2s]">
           <div className="relative mx-auto aspect-square w-full">
             <div className="absolute inset-0 scale-110 rounded-[45%_55%_60%_40%/55%_45%_55%_45%] bg-pink-100" />
@@ -152,9 +152,17 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-2 animate-fade-up [animation-delay:0.15s]">
+        {/* تیتر با علامت‌های تزئینی بالای گوشه‌ها */}
+        <div className="relative  mt-5 animate-fade-up [animation-delay:0.15s]">
+          <img
+            src="/images/products/khat.webp"
+            alt=""
+            width={40}
+            height={40}
+            className="absolute -top-3 -right-2 h-7 w-7"
+          />
           <svg
-            className="h-5 w-5 text-berry/60"
+            className="absolute -mt-[-27px] -left-4 h-5 w-5 text-berry/60"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -162,27 +170,21 @@ export default function Hero() {
           >
             <path d="M12 21s-7.5-4.6-10-9.3C.5 8.1 2.3 4.5 6 4a5 5 0 0 1 6 2.5A5 5 0 0 1 18 4c3.7.5 5.5 4.1 4 7.7-2.5 4.7-10 9.3-10 9.3Z" />
           </svg>
-          <img
-            src="/images/products/khat.webp"
-            alt=""
-            width={40}
-            height={40}
-            className="h-8 w-8"
-          />
+
+          <h1 className="text-3xl font-bold leading-tight text-cocoa sm:text-4xl">
+            هر روز، یک
+            <br />
+            <span className="text-berry">تکه خوشحالی</span>
+          </h1>
         </div>
 
-        <h1 className="text-3xl font-bold leading-tight text-cocoa animate-fade-up [animation-delay:0.15s] sm:text-4xl">
-          هر روز، یک
-          <br />
-          <span className="text-berry">تکه خوشحالی</span>
-        </h1>
-
+        {/* خط موج‌دار قلبی، زیر تیتر */}
         <Image
           src="/images/products/heart.webp"
           alt="heart"
-          width={100}
-          height={100}
-          className="h-16 w-16 animate-fade-up [animation-delay:0.3s] sm:h-20 sm:w-20"
+          width={140}
+          height={40}
+          className="h-12 w-auto animate-fade-up [animation-delay:0.3s]"
         />
 
         <p className="max-w-md text-sm leading-7 text-cocoa/70 animate-fade-up [animation-delay:0.4s] sm:text-base">
@@ -195,6 +197,29 @@ export default function Hero() {
           <span className="text-base font-bold text-berry sm:text-lg">
             سفارش دهید
           </span>
+          <svg
+            width="56"
+            height="20"
+            viewBox="0 0 56 20"
+            fill="none"
+            className="shrink-0 text-berry/70"
+          >
+            <path
+              d="M54 10 H16"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeDasharray="4 4"
+              strokeLinecap="round"
+            />
+            <path
+              d="M22 4 L14 10 L22 16"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+          </svg>
           <Link href="/products" aria-label="مشاهده همه محصولات">
             <img
               src="/images/hero/order-badge.webp"
