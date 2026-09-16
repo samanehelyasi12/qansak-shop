@@ -8,7 +8,7 @@ export default function MembershipBanner() {
         <div className="relative mx-auto max-w-lg sm:mr-auto sm:ml-0">
           {/* ریسمان */}
           <svg
-            className="absolute mt-[30px] ml-[-60px] z-40 h-20 w-16 sm:left-16"
+           className="absolute left-10 mt-[24px] z-40 h-20 w-16 -translate-x-8 sm:left-4 sm:translate-x-0"
             viewBox="0 0 60 80"
             fill="none"
           >
@@ -22,7 +22,7 @@ export default function MembershipBanner() {
           </svg>
 
           {/* تگ آویزون */}
-          <div className="absolute ml-[-70px] mt-[80px] z-20 w-20 origin-top rotate-[-6deg] animate-tag-swing sm:left-12 sm:w-28">
+          <div className="absolute left-0 mt-[75px] z-20 w-20 -translate-x-10 origin-top rotate-[-6deg] animate-tag-swing sm:right-[410px] sm:w-28 sm:translate-x-0">
             <img
               src="/images/decor/discount-tag.webp"
               alt="تخفیف ویژه ۱۵٪"

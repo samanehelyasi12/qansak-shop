@@ -37,7 +37,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* آیکون علاقه‌مندی */}
       <button
         type="button"
-        aria-label={isFavorite ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
+        aria-label={
+          isFavorite ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"
+        }
         onClick={(e) => {
           e.preventDefault();
           setIsFavorite((v) => !v);
@@ -50,42 +52,42 @@ export default function ProductCard({ product }: ProductCardProps) {
           }`}
         />
       </button>
-
       {/* محتوای پایین کارت */}
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-4">
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-2 sm:gap-2 sm:p-3 lg:p-4">
         <Link href={`/products/${product.slug}`}>
-         <h3 className="text-sm font-bold text-white sm:text-base">{product.name}</h3>
+          <h3 className="text-[11px] font-bold text-white sm:text-sm lg:text-base">
+            {product.name}
+          </h3>
         </Link>
 
-        <p className="line-clamp-1 text-xs leading-5 text-white/70">
-        </p>
+        <p className="line-clamp-1 text-[9px] leading-3.5 text-white/70 sm:text-xs sm:leading-5"></p>
 
-        <div className="mt-1 flex items-baseline gap-2">
+        <div className="mt-0.5 flex min-w-0 flex-wrap items-baseline gap-1 sm:mt-1 sm:gap-2">
           {product.discountPrice && (
-            <span className="text-xs text-white/50 line-through">
+            <span className="text-[8px] text-white/50 line-through sm:text-[10px] lg:text-xs">
               {product.price.toLocaleString("fa-IR")} تومان
             </span>
           )}
-          <span className="text-base font-bold text-white">
+
+          <span className="text-[11px] font-bold text-white sm:text-sm lg:text-base">
             {displayPrice.toLocaleString("fa-IR")} تومان
           </span>
         </div>
 
-        <div className="mt-2 flex items-center gap-3">
+        <div className="mt-1 flex min-w-0 items-center gap-1.5 sm:mt-2 sm:gap-3">
           <button
             type="button"
             aria-label="افزودن سریع به سبد"
             disabled={!product.inStock}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white/70 text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-white/70 text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40 sm:h-9 sm:w-9 lg:h-11 lg:w-11"
           >
-            <ShoppingBag className="h-5 w-5" />
-          
+            <ShoppingBag className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
           </button>
 
           <button
             type="button"
             disabled={!product.inStock}
-            className="flex h-7 flex-1 items-center justify-center rounded-full bg-qandek-strawberry text-sm font-bold text-white transition hover:bg-qandek-strawberry/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-white/30"
+            className="flex h-6 min-w-0 flex-1 items-center justify-center rounded-full bg-qandek-strawberry px-1.5 text-[9px] font-bold text-white transition hover:bg-qandek-strawberry/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-white/30 sm:h-7 sm:px-2 sm:text-xs lg:h-8 lg:px-3 lg:text-sm"
           >
             {product.inStock ? "افزودن به سبد" : "ناموجود"}
           </button>
