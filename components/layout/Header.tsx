@@ -15,7 +15,7 @@ const categoryNameBySlug = new Map(
 
 const navItems = [
   { label: "خانه", href: "/" },
-  { label: "فروشگاه", href: "/categories/cakes" },
+  { label: "فروشگاه", href: "/products" },
   { label: "دسته‌بندی‌ها", href: "#", hasDropdown: true },
   { label: "درباره ما", href: "/about" },
   { label: "تماس با ما", href: "/contact" },
@@ -116,7 +116,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50">
-      <div className="rounded-2xl border border-qandek-pink/40 bg-qandek-milk/80 shadow-sm backdrop-blur mt-2 mb-2 ">
+      <div className="rounded-2xl border border-qandek-pink/40 bg-qandek-milk/80 shadow-sm backdrop-blur ">
         <div className="h-16 md:h-17">
           <Container className="h-full">
             <div className="flex h-full items-center justify-between gap-4">
@@ -138,16 +138,14 @@ export default function Header() {
               </div>
 
               <nav
-                className="hidden flex-1 items-center justify-center gap-1 md:flex"
+                className="hidden flex-1 items-center justify-center gap-0.5 md:flex lg:gap-1"
                 role="navigation"
                 aria-label="منوی اصلی"
               >
                 {navItems.map((item) => {
                   const itemActive = item.hasDropdown
                     ? isCategoriesActive
-                    : item.href === "/categories/cakes"
-                      ? false
-                      : isActive(item.href, pathname);
+                    : isActive(item.href, pathname);
 
                   return (
                     <div key={item.label} className="relative">
@@ -170,7 +168,7 @@ export default function Header() {
                             aria-controls="categories-dropdown"
                             onClick={() => setIsCategoriesOpen((previous) => !previous)}
                             onFocus={() => setIsCategoriesOpen(true)}
-                            className={`flex cursor-pointer items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-qandek-peach ${
+                            className={`flex cursor-pointer items-center gap-1 whitespace-nowrap rounded-full px-2 py-1.5 text-[11px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-qandek-peach md:px-3 md:text-xs ${
                               itemActive || isCategoriesOpen
                                 ? "bg-qandek-peach/70 text-qandek-brown"
                                 : "text-cocoa hover:bg-qandek-peach/50 hover:text-qandek-brown"
@@ -224,7 +222,7 @@ export default function Header() {
                         <Link
                           href={item.href}
                           aria-current={itemActive ? "page" : undefined}
-                          className={`flex cursor-pointer items-center rounded-full px-3 py-1.5 text-xs font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-qandek-peach ${
+                          className={`flex cursor-pointer items-center whitespace-nowrap rounded-full px-2 py-1.5 text-[11px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-qandek-peach md:px-3 md:text-xs ${
                             isHomeActive && item.href === "/"
                               ? "bg-qandek-peach/70 text-qandek-brown"
                               : itemActive
@@ -407,9 +405,7 @@ export default function Header() {
               {navItems.map((item) => {
                 const itemActive = item.hasDropdown
                   ? isCategoriesActive
-                  : item.href === "/categories/cakes"
-                    ? false
-                    : isActive(item.href, pathname);
+                  : isActive(item.href, pathname);
 
                 return item.hasDropdown ? (
                   <div key={item.label} className="border-t border-qandek-pink/40 pt-3 mt-3">
