@@ -8,23 +8,22 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const displayPrice = product.discountPrice || product.price;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
         <span className="mb-2 block text-sm font-medium text-caramel">
           {product.categorySlug}
         </span>
-        <h1 className="mb-3 text-3xl font-bold text-cocoa">{product.name}</h1>
-        <p className="text-lg text-cocoa/80">{product.description}</p>
+        <h1 className="mb-3 text-2xl font-bold text-cocoa sm:text-3xl">{product.name}</h1>
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         <div className="flex flex-col">
           {product.discountPrice && (
-            <span className="text-lg text-cocoa/40 line-through">
+            <span className="text-base text-cocoa/40 line-through sm:text-lg">
               {product.price.toLocaleString("fa-IR")} تومان
             </span>
           )}
-          <span className="text-2xl font-bold text-caramel">
+          <span className="text-xl font-bold text-caramel sm:text-2xl">
             {displayPrice.toLocaleString("fa-IR")} تومان
           </span>
         </div>
@@ -36,14 +35,12 @@ export default function ProductInfo({ product }: ProductInfoProps) {
               </span>
             ))}
           </span>
-          <span className="text-sm text-cocoa/60">
-            ({product.rating})
-          </span>
+          <span className="text-sm text-cocoa/60">({product.rating})</span>
         </div>
       </div>
 
       {!product.inStock && (
-        <div className="rounded-lg bg-berry/10 p-4 text-center text-berry font-medium">
+        <div className="rounded-lg bg-berry/10 p-4 text-center font-medium text-berry">
           در حال حاضر ناموجود است
         </div>
       )}

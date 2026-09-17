@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getAllCategories } from "@/data/categories";
 import { getProductsByCategory } from "@/data/products";
-import ProductCard from "@/components/product/ProductCard";
+import ProductsGrid from "@/components/product/ProductsGrid";
 import Container from "@/components/ui/Container";
 import type { Product } from "@/types/product";
 
@@ -23,29 +23,44 @@ export default function ProductsPage() {
   const products = Array.from(productMap.values());
 
   return (
-    <div className="py-12">
-      <Container>
-        <header className="mb-10 text-center">
-          <h1 className="mb-3 text-3xl font-bold text-cocoa sm:text-4xl">
-            فروشگاه
-          </h1>
-          <p className="mx-auto max-w-2xl text-lg text-cocoa/70">
-            تمام محصولات قندک را از بین کیک، شیرینی، نان و شکلات دست‌ساز پیدا کنید
-          </p>
-        </header>
+    <section
+      className="relative min-h-screen bg-cover bg-center bg-no-repeat py-16"
+      style={{
+        backgroundImage: `url('/images/decor/products-bg-desktop.webp')`,
+        backgroundAttachment: "fixed",
+      }}
+    >
+      {/* پس‌زمینه برای موبایل */}
+      <style>{`
+        @media (max-width: 1023px) {
+          section {
+            background-image: url('/images/decor/products-bg-mobile.webp') !important;
+            background-attachment: scroll;
+          }
+        }
+      `}</style>
 
-        {products.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <div className="py-12 text-center text-cocoa/60">
-            <p>محصولی یافت نشد</p>
-          </div>
-        )}
+      {/* Overlay نیمه‌شفاف برای خوانایی بهتر متن */}
+      <div className="absolute inset-0 bg-white/5"></div>
+
+      <Container>
+        <div className="relative z-10">
+          <header className="mb-12 text-center">
+            <h1 className="mb-3 text-2xl font-bold text-cocoa sm:text-3xl lg:text-4xl xl:text-5xl">
+              فروشگاه
+            </h1>
+            <p className="mx-auto max-w-2xl text-xs text-cocoa/70 sm:text-sm lg:text-lg"></p>
+          </header>
+
+          {products.length > 0 ? (
+            <ProductsGrid products={products} />
+          ) : (
+            <div className="py-12 text-center text-cocoa/60">
+              <p>محصولی یافت نشد</p>
+            </div>
+          )}
+        </div>
       </Container>
-    </div>
+    </section>
   );
 }

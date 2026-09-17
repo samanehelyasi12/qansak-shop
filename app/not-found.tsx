@@ -1,29 +1,35 @@
 import Link from "next/link";
-import Button from "@/components/ui/Button";
-import Container from "@/components/ui/Container";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-[60vh] items-center justify-center px-4">
-      <Container>
-        <div className="text-center py-16">
-          <h1 className="mb-4 text-6xl font-bold text-caramel">۴۰۴</h1>
-          <h2 className="mb-4 text-2xl font-bold text-cocoa">صفحه مورد نظر یافت نشد</h2>
-          <p className="mb-8 text-lg text-cocoa/70">
-            متاسفیم، صفحهٔ مورد نظر شما وجود ندارد یا منتقل شده است.
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#fdeef1]">
+      <section
+        className="relative flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat px-4"
+        style={{
+          backgroundImage: `url('/images/decor/404-desktop.webp')`,
+        }}
+      >
+        {/* پس‌زمینه برای موبایل */}
+        <style>{`
+          @media (max-width: 1023px) {
+            section {
+              background-image: url('/images/decor/404-mobile.webp') !important;
+            }
+          }
+        `}</style>
+
+        <div className="flex w-full flex-col mt-40 items-center pt-[26vh] text-center sm:pt-[30vh] lg:pt-[32vh]">
+          <p className="mb-3 text-sm font-medium text-qandek-strawberry sm:mb-4 sm:text-base lg:text-lg">
+            صفحه مورد نظر یافت نشد
           </p>
-          <div className="flex items-center justify-center gap-4">
-            <Link href="/">
-              <Button size="lg">بازگشت به خانه</Button>
-            </Link>
-            <Link href="/categories/cakes">
-              <Button variant="secondary" size="lg">
-                دسته‌بندی‌ها
-              </Button>
-            </Link>
-          </div>
+          <Link
+            href="/"
+            className="rounded-full bg-qandek-strawberry px-6 py-2.5 text-xs font-bold text-white shadow-md transition hover:bg-qandek-strawberry/90 active:scale-[0.98] sm:px-8 sm:py-3 sm:text-sm lg:px-10 lg:py-3.5 lg:text-base"
+          >
+            بازگشت به خانه
+          </Link>
         </div>
-      </Container>
+      </section>
     </div>
   );
 }

@@ -1,11 +1,11 @@
+// app/categories/[slug]/page.tsx
+
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getAllCategories, getCategoryBySlug, getCategorySlugs } from "@/data/categories";
+import { getCategoryBySlug, getAllCategories } from "@/data/categories";
 import { getProductsByCategory } from "@/data/products";
 import ProductCard from "@/components/product/ProductCard";
-import CategoryCard from "@/components/home/CategoryCard";
-import SectionTitle from "@/components/ui/SectionTitle";
 import Container from "@/components/ui/Container";
 
 interface CategoryPageProps {
@@ -13,8 +13,8 @@ interface CategoryPageProps {
 }
 
 export async function generateStaticParams() {
-  const slugs = getCategorySlugs();
-  return slugs.map((slug) => ({ slug }));
+  const categories = getAllCategories();
+  return categories.map((cat) => ({ slug: cat.slug }));
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
@@ -27,12 +27,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
   return {
     title: `${category.name} | قندک`,
-    description: category.description,
-    openGraph: {
-      title: `${category.name} | قندک`,
-      description: category.description,
-      type: "website",
-    },
+    description: category.description || `${category.name} در قندک`,
   };
 }
 
@@ -48,65 +43,89 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const allCategories = getAllCategories();
 
   return (
-    <div className="py-12">
+    <section
+      className="relative min-h-screen bg-cover bg-center bg-no-repeat py-12 sm:py-16"
+      style={{
+        backgroundImage: `url('/images/decor/products-bg-desktop.webp')`,
+        backgroundAttachment: "fixed",
+      }}
+    >
+      {/* پس‌زمینه برای موبایل */}
+      <style>{`
+        @media (max-width: 1023px) {
+          section {
+            background-image: url('/images/decor/products-bg-mobile.webp') !important;
+            background-attachment: scroll;
+          }
+        }
+      `}</style>
+
+      {/* Overlay نیمه‌شفاف برای خوانایی بهتر متن */}
+      <div className="absolute inset-0 bg-white/5"></div>
+
       <Container>
-        <nav className="mb-8" aria-label="breadcrumb">
-          <ol className="flex items-center gap-2 text-sm text-cocoa/60">
-            <li>
-              <Link href="/" className="hover:text-caramel">خانه</Link>
-            </li>
-            <li aria-hidden="true">/</li>
-            <li>
-              <Link href="/categories/cakes" className="hover:text-caramel">
-                دسته‌بندی‌ها
-              </Link>
-            </li>
-            <li aria-hidden="true">/</li>
-            <li className="text-cocoa font-medium" aria-current="page">
+        <div className="relative z-10">
+          {/* Breadcrumb - شیشه‌ای */}
+          <nav className="mb-8 sm:mb-10" aria-label="breadcrumb">
+            <ol className="inline-block rounded-2xl bg-white/20 backdrop-blur-md border border-white/40 px-4 py-3 sm:px-6 sm:py-4 text-xs text-cocoa/80 sm:text-sm shadow-lg">
+              <li className="flex items-center gap-2 flex-wrap">
+                <Link href="/" className="hover:text-cocoa transition font-medium">خانه</Link>
+                <span aria-hidden="true" className="text-cocoa/60">/</span>
+                <Link href="/products" className="hover:text-cocoa transition font-medium">فروشگاه</Link>
+                <span aria-hidden="true" className="text-cocoa/60">/</span>
+                <span className="text-cocoa font-bold" aria-current="page">{category.name}</span>
+              </li>
+            </ol>
+          </nav>
+
+          {/* عنوان دسته‌بندی - شیشه‌ای */}
+          <header className="mb-10 rounded-3xl bg-white/25 backdrop-blur-lg border border-white/50 p-4 text-center sm:p-6 lg:p-8 shadow-xl">
+            <h1 className="mb-2 text-2xl font-bold text-cocoa sm:text-3xl lg:text-4xl">
               {category.name}
-            </li>
-          </ol>
-        </nav>
+            </h1>
+            <p className="text-xs text-cocoa/70 sm:text-sm lg:text-base">{category.description}</p>
+          </header>
 
-        <header className="mb-12 text-center">
-          <h1 className="mb-3 text-3xl font-bold text-cocoa sm:text-4xl">
-            {category.name}
-          </h1>
-          <p className="text-lg text-cocoa/70 max-w-2xl mx-auto">
-            {category.description}
-          </p>
-        </header>
+          <div className="grid gap-6 lg:gap-8 lg:grid-cols-4">
+            {/* سایر دسته‌بندی‌ها - سمت چپ (فقط تو دسکتاپ) - شیشه‌ای */}
+            <aside className="hidden lg:block">
+              <div className="sticky top-24 rounded-2xl bg-white/20 backdrop-blur-md border border-white/40 p-4 sm:p-5 shadow-lg">
+                <h3 className="mb-4 font-bold text-cocoa text-sm lg:text-base">سایر دسته‌بندی‌ها</h3>
+                <div className="space-y-2">
+                  {allCategories.map((cat) => (
+                    <Link
+                      key={cat.slug}
+                      href={`/categories/${cat.slug}`}
+                      className={`block rounded-xl px-3 py-2.5 transition text-sm font-medium ${
+                        cat.slug === slug
+                          ? "bg-white/60 backdrop-blur-sm text-berry border border-berry/30 shadow-md"
+                          : "text-cocoa hover:bg-white/30 hover:backdrop-blur-sm border border-transparent hover:border-white/30"
+                      }`}
+                    >
+                      {cat.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </aside>
 
-        <section aria-labelledby="products-title">
-          <SectionTitle id="products-title" title="محصولات" subtitle={`${products.length} محصول یافت شد`} />
-          {products.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+            {/* محصولات - سمت راست (تو دسکتاپ، تمام عرض تو موبایل) */}
+            <div className="lg:col-span-3">
+              {products.length > 0 ? (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-5">
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className="py-12 text-center text-cocoa/60">
+                  <p className="text-sm sm:text-base">محصولی در این دسته‌بندی یافت نشد</p>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="text-center py-12 text-cocoa/60">
-              <p>محصولی در این دسته‌بندی یافت نشد</p>
-            </div>
-          )}
-        </section>
-
-        <section className="mt-16" aria-labelledby="other-categories-title">
-          <SectionTitle
-            id="other-categories-title"
-            title="سایر دسته‌بندی‌ها"
-            subtitle="دسته‌بندی‌های دیگر را هم ببینید"
-          />
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-            {allCategories
-              .filter((c) => c.slug !== slug)
-              .map((cat) => (
-                <CategoryCard key={cat.id} category={cat} />
-              ))}
           </div>
-        </section>
+        </div>
       </Container>
-    </div>
+    </section>
   );
 }

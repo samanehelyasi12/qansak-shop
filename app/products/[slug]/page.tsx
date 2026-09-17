@@ -1,12 +1,13 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProductBySlug, getProductSlugs, getProductsByCategory } from "@/data/products";
+import { getProductBySlug, getProductSlugs } from "@/data/products";
 import { getCategoryBySlug } from "@/data/categories";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductInfo from "@/components/product/ProductInfo";
 import PreparationTime from "@/components/product/PreparationTime";
 import ProductClientWrapper from "@/components/product/ProductClientWrapper";
+import ProductTabs from "@/components/product/ProductTabs";
 import Container from "@/components/ui/Container";
 
 interface ProductPageProps {
@@ -47,17 +48,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 
   const category = getCategoryBySlug(product.categorySlug);
-  const relatedProducts = getProductsByCategory(product.categorySlug)
-    .filter((p) => p.id !== product.id)
-    .slice(0, 4);
 
   return (
-    <div className="py-12">
+    <div className="py-8 sm:py-12">
       <Container>
-        <nav className="mb-8" aria-label="breadcrumb">
-          <ol className="flex items-center gap-2 text-sm text-cocoa/60 flex-wrap">
+        <nav className="mb-6 sm:mb-8" aria-label="breadcrumb">
+          <ol className="flex flex-wrap items-center gap-2 text-xs text-cocoa/60 sm:text-sm">
             <li>
               <Link href="/" className="hover:text-caramel">خانه</Link>
+            </li>
+            <li aria-hidden="true">/</li>
+            <li>
+              <Link href="/products" className="hover:text-caramel">محصولات</Link>
             </li>
             <li aria-hidden="true">/</li>
             <li>
@@ -66,58 +68,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </Link>
             </li>
             <li aria-hidden="true">/</li>
-            <li className="text-cocoa font-medium truncate max-w-[200px]" aria-current="page">
+            <li className="max-w-[160px] truncate font-medium text-cocoa sm:max-w-[200px]" aria-current="page">
               {product.name}
             </li>
           </ol>
         </nav>
 
-        <div className="grid gap-8 lg:grid-cols-2">
-          <div className="sticky top-24 space-y-6">
+        {/*
+          گرید اصلی:
+          موبایل: تک‌ستونه (عکس بالا، بقیه پایین)
+          از lg به بعد: عکس سمت چپ (ستون دوم به دلیل RTL) و ثابت (sticky)،
+          توضیحات/گزینه‌ها/تب‌ها کاملاً سمت راست در یک ستون پشت سر هم
+        */}
+        <div className="grid gap-8 lg:grid-cols-2 lg:gap-10 xl:gap-14">
+          {/* ستون راست: اطلاعات محصول، گزینه‌ها، افزودن به سبد، تب‌ها */}
+          <div className="order-2 space-y-6 lg:order-1">
+            <ProductInfo product={product} />
+            <ProductClientWrapper product={product} />
+            <ProductTabs product={product} />
+          </div>
+
+          {/* ستون چپ: گالری عکس + زمان آماده‌سازی، ثابت هنگام اسکرول */}
+          <div className="order-1 space-y-6 lg:sticky lg:top-24 lg:order-2 lg:self-start">
             <ProductGallery product={product} />
             <PreparationTime product={product} />
           </div>
-
-          <div className="space-y-6">
-            <ProductInfo product={product} />
-            <ProductClientWrapper product={product} />
-          </div>
         </div>
-
-        {relatedProducts.length > 0 && (
-          <section className="mt-16" aria-labelledby="related-title">
-            <div className="flex items-end justify-between mb-8">
-              <div>
-                <h2 id="related-title" className="text-2xl font-bold text-cocoa">
-                  محصولات مرتبط
-                </h2>
-                <p className="text-sm text-cocoa/70">محصولات دیگر از همین دسته‌بندی</p>
-              </div>
-              <Link href={`/categories/${product.categorySlug}`} className="text-sm text-caramel hover:underline">
-                مشاهده همه
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              {relatedProducts.map((p) => (
-                <div key={p.id} className="block">
-                  <Link href={`/products/${p.slug}`}>
-                    <div className="aspect-square overflow-hidden rounded-lg bg-cream mb-2">
-                      <img
-                        src={p.images[0]}
-                        alt={p.name}
-                        className="h-full w-full object-cover hover:scale-105 transition duration-300"
-                      />
-                    </div>
-                    <h3 className="mb-1 text-sm font-medium text-cocoa line-clamp-1">{p.name}</h3>
-                    <p className="text-sm font-bold text-caramel">
-                      {(p.discountPrice || p.price).toLocaleString("fa-IR")} تومان
-                    </p>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
       </Container>
     </div>
   );

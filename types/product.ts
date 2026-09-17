@@ -11,6 +11,7 @@ export interface ProductOptionValue {
 }
 
 export interface Product {
+  reviews: any;
   id: string;
   slug: string;
   name: string;
