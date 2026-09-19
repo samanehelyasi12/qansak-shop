@@ -9,10 +9,10 @@ const quickLinks = [
 ];
 
 const categoryLinks = [
-  { label: "کیک", href: "/categories/cakes" },
-  { label: "شیرینی", href: "/categories/pastries" },
-  { label: "نان", href: "/categories/breads" },
-  { label: "شکلات", href: "/categories/chocolates" },
+  { label: "کیک", href: "/categories/cake" },
+  { label: "شیرینی", href: "/categories/sable" },
+  { label: "نان", href: "/categories/bread" },
+  { label: "شکلات", href: "/categories/candy" },
 ];
 
 const supportLinks = [

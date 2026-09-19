@@ -1,4 +1,5 @@
 import type { Product } from "@/types/product";
+import { getCategoryBySlug } from "@/data/categories";
 
 interface ProductInfoProps {
   product: Product;
@@ -6,12 +7,13 @@ interface ProductInfoProps {
 
 export default function ProductInfo({ product }: ProductInfoProps) {
   const displayPrice = product.discountPrice || product.price;
+  const category = getCategoryBySlug(product.categorySlug);
 
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
         <span className="mb-2 block text-sm font-medium text-caramel">
-          {product.categorySlug}
+          {category?.name ?? product.categorySlug}
         </span>
         <h1 className="mb-3 text-2xl font-bold text-cocoa sm:text-3xl">{product.name}</h1>
       </div>

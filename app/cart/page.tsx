@@ -19,23 +19,23 @@ interface CartItem {
 const initialItems: CartItem[] = [
   {
     id: "1",
-    slug: "chocolate-cake",
-    name: "کیک شکلاتی",
-    image: "/images/products/chocolate-cake.jpg",
-    price: 385000,
+    slug: "chocolate-truffle-cake",
+    name: "کیک ترافل شکلاتی",
+    image: "/images/categories/cake.webp",
+    price: 760000,
     quantity: 1,
   },
   {
     id: "2",
-    slug: "chocolate-chip-cookie",
-    name: "کوکی شکلاتی",
-    image: "/images/products/cookie.jpg",
-    price: 45000,
+    slug: "chickpea-cookie",
+    name: "نان نخودچی",
+    image: "/images/categories/cookie.webp",
+    price: 320000,
     quantity: 2,
   },
 ];
 
-const SHIPPING_COST = 0;
+const SHIPPING_COST: number = 0;
 
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>(initialItems);
@@ -309,7 +309,7 @@ function EmptyCart() {
           <p className="mb-8 text-cocoa/70">
             هنوز محصولی به سبد اضافه نکرده‌اید. از شیرینی‌های تازه قندک شروع کنید.
           </p>
-          <Link href="/categories/cakes">
+          <Link href="/categories/cake">
             <Button size="lg" className="w-full cursor-pointer">
               شروع خرید
             </Button>
