@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
@@ -15,6 +16,11 @@ const mockOrders: Record<string, any> = {
     status: "delivered",
     statusLabel: "تحویل داده شده",
     statusColor: "text-pistachio",
+    customer: {
+      firstName: "علی",
+      lastName: "محمدی",
+      phone: "۰۹۱۲۳۴۵۶۷۸۹",
+    },
     items: [
       { name: "کیک ترافل شکلاتی", quantity: 1, price: 760000, slug: "chocolate-truffle-cake" },
       { name: "نان خامه‌ای", quantity: 2, price: 45000, slug: "cream-puff" },
@@ -23,7 +29,7 @@ const mockOrders: Record<string, any> = {
     shipping: 30000,
     discount: 30000,
     total: 850000,
-    delivery: { method: "express", address: "تهران، خیابان ولیعصر، پلاک ۱۲۳" },
+    delivery: { method: "pickup", address: "تهران، خیابان ولیعصر، پلاک ۱۲۳" },
     payment: { method: "online", status: "paid" },
   },
   "ORD-12346": {
@@ -32,6 +38,11 @@ const mockOrders: Record<string, any> = {
     status: "preparing",
     statusLabel: "در حال تهیه",
     statusColor: "text-caramel",
+    customer: {
+      firstName: "سارا",
+      lastName: "احمدی",
+      phone: "۰۹۳۵۶۶۶۷۷۸۸",
+    },
     items: [
       { name: "جعبه شکلات تلخ", quantity: 1, price: 440000, slug: "dark-chocolate-box" },
     ],
@@ -70,7 +81,34 @@ export default async function OrderPage({ params }: OrderPageProps) {
   const currentStepIndex = statusSteps.findIndex((s) => s.key === order.status);
 
   return (
-    <div className="py-12">
+    <div className="relative min-h-screen overflow-hidden bg-[#fff9f7]">
+      {/* بک‌گراند دسکتاپ — همون بک‌گراند صفحه سبد خرید */}
+      <div className="pointer-events-none absolute inset-0 -z-0 hidden lg:block">
+        <Image
+          src="/images/decor/products-bg-desktop.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-white/45" />
+      </div>
+
+      {/* بک‌گراند موبایل — همون بک‌گراند صفحه سبد خرید */}
+      <div className="pointer-events-none absolute inset-0 -z-0 lg:hidden">
+        <Image
+          src="/images/decor/products-bg-mobile.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-white/50" />
+      </div>
+
+      <div className="relative z-10 py-12">
       <Container>
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -147,46 +185,60 @@ export default async function OrderPage({ params }: OrderPageProps) {
                 </div>
               )}
               <div className="border-t border-cream pt-2 flex justify-between text-lg font-bold text-cocoa">
-                <dt>مجموع قابل پرداخت</dt>
+                <dt>مبلغ پرداختی</dt>
                 <dd className="text-caramel">{order.total.toLocaleString("fa-IR")} تومان</dd>
               </div>
             </dl>
           </section>
 
-          <section className="space-y-4 rounded-xl border border-cream bg-white p-6">
-            <h2 className="text-xl font-bold text-caramel">اطلاعات تحویل و پرداخت</h2>
-            <dl className="space-y-3 text-sm">
-              <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
-                <dt className="text-cocoa/70">روش تحویل</dt>
+          <div className="space-y-8">
+            {/* اطلاعات مشتری: اسم، نام‌خانوادگی، شماره تماس، آدرس */}
+            <section className="space-y-4 rounded-xl border border-cream bg-white p-6">
+              <h2 className="text-xl font-bold text-caramel">اطلاعات مشتری</h2>
+              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-3 text-sm">
+                <dt className="text-cocoa/70">نام و نام‌خانوادگی</dt>
                 <dd className="text-cocoa">
-                  {order.delivery.method === "express" && "پیک سریع (۳ ساعت)"}
-                  {order.delivery.method === "standard" && "پست پیشتاز (۱-۲ روز)"}
-                  {order.delivery.method === "pickup" && "تحویل حضوری از شعبه"}
+                  {order.customer.firstName} {order.customer.lastName}
                 </dd>
-                <dt className="text-cocoa/70">آدرس</dt>
+                <dt className="text-cocoa/70">شماره تماس</dt>
+                <dd className="text-cocoa" dir="ltr">
+                  {order.customer.phone}
+                </dd>
+                <dt className="text-cocoa/70">آدرس تحویل</dt>
                 <dd className="text-cocoa">{order.delivery.address}</dd>
-                <dt className="text-cocoa/70">روش پرداخت</dt>
-                <dd className="text-cocoa">
-                  {order.payment.method === "online" && "پرداخت آنلاین"}
-                  {order.payment.method === "card" && "پرداخت کارت در محل"}
-                  {order.payment.method === "cash" && "پرداخت نقدی در محل"}
-                </dd>
-                <dt className="text-cocoa/70">وضعیت پرداخت</dt>
-                <dd className={`font-medium ${order.payment.status === "paid" ? "text-pistachio" : "text-berry"}`}>
-                  {order.payment.status === "paid" && "پرداخت شده"}
-                  {order.payment.status === "pending" && "در انتظار پرداخت"}
-                  {order.payment.status === "failed" && "ناموفق"}
-                </dd>
-              </div>
-            </dl>
-            <Link href="/payment/result?order={id}">
-              <Button variant="secondary" className="w-full mt-4">
-                مشاهده رسید پرداخت
-              </Button>
-            </Link>
-          </section>
+              </dl>
+            </section>
+
+            <section className="space-y-4 rounded-xl border border-cream bg-white p-6">
+              <h2 className="text-xl font-bold text-caramel">اطلاعات تحویل و پرداخت</h2>
+              <dl className="space-y-3 text-sm">
+                <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
+                  <dt className="text-cocoa/70">روش تحویل</dt>
+                  <dd className="text-cocoa">پیک درون‌شهری</dd>
+                  <dt className="text-cocoa/70">روش پرداخت</dt>
+                  <dd className="text-cocoa">
+                    {order.payment.method === "online" && "پرداخت آنلاین (زرین‌پال)"}
+                    {order.payment.method === "card" && "کارت‌خوان در محل"}
+                    {order.payment.method === "cash" && "پرداخت نقدی در محل"}
+                  </dd>
+                  <dt className="text-cocoa/70">وضعیت پرداخت</dt>
+                  <dd className={`font-medium ${order.payment.status === "paid" ? "text-pistachio" : "text-berry"}`}>
+                    {order.payment.status === "paid" && "پرداخت شده"}
+                    {order.payment.status === "pending" && "در انتظار پرداخت"}
+                    {order.payment.status === "failed" && "ناموفق"}
+                  </dd>
+                </div>
+              </dl>
+              <Link href={`/payment/result?order=${id}`}>
+                <Button variant="secondary" className="w-full mt-4">
+                  مشاهده رسید پرداخت
+                </Button>
+              </Link>
+            </section>
+          </div>
         </div>
       </Container>
+      </div>
     </div>
   );
 }
