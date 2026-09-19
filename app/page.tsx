@@ -17,7 +17,6 @@ export default function HomePage() {
       <MembershipBanner />
       <NewProducts />
        <Rules />
-      
       <CustomerReviews />
       <FAQ />
     </>
