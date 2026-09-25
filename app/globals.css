@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    direction: rtl;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans text-cocoa antialiased;
+    font-family: var(--font-sgkara), system-ui, sans-serif;
+    background-color: #ffffff;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-molsaq-arabic), system-ui, sans-serif;
+  }
+
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid #F9B5A7;
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* آیکون سوشال: پر شدن رنگ از پایین به بالا + حالت سه‌بعدی */
+  .social-icon {
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .social-icon::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 0;
+  }
+
+  .social-icon:hover::before,
+  .social-icon:focus-visible::before {
+    transform: scaleY(1);
+  }
+
+  .social-icon:hover,
+  .social-icon:focus-visible {
+    transform: translateY(-6px) rotateX(14deg) rotateY(-10deg) scale(1.08);
+  }
+
+  .social-icon > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .social-telegram::before {
+    background: linear-gradient(180deg, #37bbfe 0%, #007dbb 100%);
+  }
+
+  .social-instagram::before {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  }
+
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0) rotate(var(--float-rotate, 0deg)); }
+    50% { transform: translateY(-16px) rotate(var(--float-rotate, 0deg)); }
+  }
+
+  .animate-float {
+    animation: floatY 5s ease-in-out infinite;
+  }
+}

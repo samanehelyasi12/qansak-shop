@@ -1,0 +1,55 @@
+import type { Product } from "@/types/product";
+import { getCategoryBySlug } from "@/data/categories";
+import { getEffectiveProductPrice } from "@/lib/pricing";
+
+interface ProductInfoProps {
+  product: Product;
+}
+
+export default function ProductInfo({ product }: ProductInfoProps) {
+  const displayPrice = getEffectiveProductPrice(product);
+  const category = getCategoryBySlug(product.categorySlug);
+
+  return (
+    <div className="space-y-4 sm:space-y-6">
+      <div>
+        <span className="mb-2 block text-sm font-medium text-caramel">
+          {category?.name ?? product.categorySlug}
+        </span>
+        <h1 className="mb-3 text-2xl font-bold text-cocoa sm:text-3xl">{product.name}</h1>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+        <div className="flex flex-col">
+          {product.discountPrice && (
+            <span className="text-base text-cocoa/40 line-through sm:text-lg">
+              {product.price.toLocaleString("fa-IR")} تومان
+            </span>
+          )}
+          <span className="text-xl font-bold text-caramel sm:text-2xl">
+            {displayPrice.toLocaleString("fa-IR")} تومان
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* ستاره‌ها تزئینی‌اند؛ معنای امتیاز از طریق aria-label و عدد کنارش منتقل می‌شود. */}
+          <span className="text-caramel" aria-hidden="true">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <span key={i} className={i < Math.floor(product.rating) ? "text-caramel" : "text-cream"}>
+                ★
+              </span>
+            ))}
+          </span>
+          <span className="text-sm text-cocoa/60">({product.rating})</span>
+          {/* معنای کامل امتیاز برای صفحه‌خوان؛ هیچ اثر بصری ندارد. */}
+          <span className="sr-only">{`امتیاز ${product.rating} از ۵`}</span>
+        </div>
+      </div>
+
+      {!product.inStock && (
+        <div className="rounded-lg bg-berry/10 p-4 text-center font-medium text-berry">
+          در حال حاضر ناموجود است
+        </div>
+      )}
+    </div>
+  );
+}
