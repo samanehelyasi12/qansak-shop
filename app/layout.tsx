@@ -85,7 +85,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fa" dir="rtl">
+    // `data-scroll-behavior` به Next.js می‌گوید که اسکرول نرم روی <html> عمدی است
+    // (globals.css: scroll-behavior: smooth). بدون آن Next.js هشدار می‌دهد و در
+    // نسخه‌های بعدی اسکرول نرم را هنگام تغییر مسیر خودش غیرفعال می‌کند.
+    // این فقط یک صفت data است و هیچ اثر بصری ندارد.
+    <html lang="fa" dir="rtl" data-scroll-behavior="smooth">
       <body className={`min-h-screen flex flex-col bg-white ${molsaqArabic.variable} ${sgKara.variable}`}>
         <CartProvider>
           <SiteJsonLd />

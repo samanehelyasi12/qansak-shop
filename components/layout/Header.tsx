@@ -8,6 +8,7 @@ import { getAllCategories } from "@/data/categories";
 import { searchProducts } from "@/data/search";
 import { getEffectiveProductPrice } from "@/lib/pricing";
 import Container from "@/components/ui/Container";
+import { useCart } from "@/lib/cart/store";
 
 const categories = getAllCategories();
 const categoryNameBySlug = new Map(
@@ -42,6 +43,17 @@ const FOCUSABLE_SELECTOR = [
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const { items: cartItems } = useCart();
+
+  /**
+   * تنها منبع حقیقت سبد، همان CartProvider است که در app/layout.tsx قرار دارد؛
+   * این فقط یک مشتق از همان state است و هیچ state جدیدی نمی‌سازد.
+   * مقدار نمایش‌داده‌شده = مجموع تعداد اقلام (نه تعداد خطوط سبد).
+   */
+  const cartCount = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
+    [cartItems],
+  );
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
@@ -408,12 +420,28 @@ export default function Header() {
 
                   <Link
                     href="/cart"
-                    aria-label="سبد خرید"
-                    className="cursor-pointer rounded-lg p-2 text-cocoa transition-colors duration-200 hover:bg-qandek-peach/50 hover:text-qandek-brown focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-qandek-peach"
+                    aria-label={
+                      cartCount > 0
+                        ? `سبد خرید، ${cartCount} کالا`
+                        : "سبد خرید، خالی"
+                    }
+                    className="relative cursor-pointer rounded-lg p-2 text-cocoa transition-colors duration-200 hover:bg-qandek-peach/50 hover:text-qandek-brown focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-qandek-peach"
                   >
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                     </svg>
+                    {cartCount > 0 && (
+                      <span
+                        className="absolute -left-1 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-berry px-1 text-[10px] font-bold leading-none text-white"
+                        aria-hidden="true"
+                      >
+                        {cartCount}
+                      </span>
+                    )}
+                    {/* اعلام تغییر تعداد سبد برای صفحه‌خوان؛ هیچ اثر بصری ندارد. */}
+                    <span className="sr-only" role="status" aria-live="polite">
+                      {cartCount > 0 ? `سبد خرید شما ${cartCount} کالا دارد` : "سبد خرید شما خالی است"}
+                    </span>
                   </Link>
 
                   <button
