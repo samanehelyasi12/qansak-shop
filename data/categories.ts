@@ -32,7 +32,7 @@ export const categories: Category[] = [
   {
     id: "cat-5",
     slug: "jar-cake",
-    name: "کیک شیشه‌ای",
+    name: "جار کیک",
     description: "کیک‌های شیشه‌ای لایه‌ای",
     image: "/images/categories/jar-cake.webp",
   },

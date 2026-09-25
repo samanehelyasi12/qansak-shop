@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Container from "@/components/ui/Container";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { getNewProducts } from "@/data/products";
@@ -8,6 +9,8 @@ import CurvedBottomBackground from "./CurvedBottomBackground";
 const leftDecor = [
   {
     src: "/images/decor/float-whisk.webp",
+    width: 1319,
+    height: 1193,
     className:
       "left-10 top-[28%] w-14 sm:left-16 sm:w-16 md:left-20 max-[639px]:-translate-x-6 md:w-20 lg:left-28 lg:w-24",
     delay: "0s",
@@ -15,6 +18,8 @@ const leftDecor = [
   },
   {
     src: "/images/decor/float-chocolate.webp",
+    width: 1360,
+    height: 1157,
     className:
       "left-16 top-1/2 w-12 sm:left-24 sm:w-14 max-[639px]:-translate-x-6 md:left-28 md:w-16 lg:left-36 lg:w-20",
     delay: "1.2s",
@@ -22,6 +27,8 @@ const leftDecor = [
   },
   {
     src: "/images/decor/float-cupcake-liner.webp",
+    width: 1298,
+    height: 1212,
     className:
       "left-10 top-[68%] w-12 sm:left-16 sm:w-14 max-[639px]:-translate-x-6 md:left-20 md:w-16 lg:left-28 lg:w-20",
     delay: "2.1s",
@@ -32,6 +39,8 @@ const leftDecor = [
 const rightDecor = [
   {
     src: "/images/decor/float-flour-bowl.webp",
+    width: 1274,
+    height: 1234,
     className:
       "right-10 top-[28%] w-14 sm:right-16 max-[639px]:translate-x-6 sm:w-16 md:right-20 md:w-20 lg:right-28 lg:w-24",
     delay: "0.6s",
@@ -39,6 +48,8 @@ const rightDecor = [
   },
   {
     src: "/images/decor/float-sprinkles.webp",
+    width: 1569,
+    height: 1003,
     className:
       "right-16 top-1/2 w-12 sm:right-28 max-[639px]:translate-x-6 sm:w-14 md:right-28 md:w-16 lg:right-36 lg:w-20",
     delay: "1.8s",
@@ -46,6 +57,8 @@ const rightDecor = [
   },
   {
     src: "/images/decor/float-cream-bag.webp",
+    width: 1350,
+    height: 1165,
     className:
       "right-10 top-[68%] w-12 sm:right-16 max-[639px]:translate-x-6 sm:w-14 md:right-20 md:w-16 lg:right-24 lg:w-20",
     delay: "2.6s",
@@ -66,11 +79,14 @@ export default function NewProducts() {
         {/* تزئینات شناور - فقط از md به بالا نشون داده می‌شن تا موبایل و تبلت کوچیک شلوغ نشه */}
         <div className="pointer-events-none absolute inset-0 ">
           {leftDecor.map((item, idx) => (
-            <img
+            <Image
               key={`l-${idx}`}
               src={item.src}
               alt=""
               aria-hidden="true"
+              width={item.width}
+              height={item.height}
+              sizes="96px"
               className={`animate-float absolute select-none opacity-95 drop-shadow-md ${item.className}`}
               style={
                 {
@@ -81,11 +97,14 @@ export default function NewProducts() {
             />
           ))}
           {rightDecor.map((item, idx) => (
-            <img
+            <Image
               key={`r-${idx}`}
               src={item.src}
               alt=""
               aria-hidden="true"
+              width={item.width}
+              height={item.height}
+              sizes="96px"
               className={`animate-float absolute select-none opacity-95 drop-shadow-md ${item.className}`}
               style={
                 {

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function MembershipBanner() {
   return (
     <section
@@ -23,17 +25,23 @@ export default function MembershipBanner() {
 
           {/* تگ آویزون */}
           <div className="absolute left-0 mt-[75px] z-20 w-20 -translate-x-10 origin-top rotate-[-6deg] animate-tag-swing sm:right-[410px] sm:w-28 sm:translate-x-0">
-            <img
+            <Image
               src="/images/decor/discount-tag.webp"
               alt="تخفیف ویژه ۱۵٪"
+              width={1024}
+              height={1536}
+              sizes="(min-width: 640px) 112px, 80px"
               className="w-full drop-shadow-lg"
             />
           </div>
 
           {/* بنر اصلی */}
-          <img
+          <Image
             src="/images/decor/membership-banner.webp"
             alt="عضوی از خانواده ما شوید"
+            width={1512}
+            height={557}
+            sizes="(min-width: 640px) 512px, 92vw"
             className="w-full"
           />
         </div>

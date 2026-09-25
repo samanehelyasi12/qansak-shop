@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getAllCategories } from "@/data/categories";
 import Container from "@/components/ui/Container";
-import SectionTitle from "@/components/ui/SectionTitle";
 
 function getVisibleCount(width: number) {
   if (width >= 1280) return 6;
@@ -42,10 +41,13 @@ export default function Categories() {
       <Container>
         <div className="mb-8 text-center">
           <div className="mx-auto flex max-w-2xl items-center justify-center gap-3 sm:gap-5">
-            <img
+            <Image
               src="/images/decor/ribbon-left.png"
               alt=""
               aria-hidden="true"
+              width={797}
+              height={724}
+              sizes="48px"
               className="absolute z-10 h-8 shrink-0 mr-36 sm:h-11 sm:mr-48"
             />
             <h2
@@ -54,10 +56,13 @@ export default function Categories() {
             >
               دسته‌بندی‌ها
             </h2>
-            <img
+            <Image
               src="/images/decor/ribbon-right.webp"
               alt=""
               aria-hidden="true"
+              width={699}
+              height={724}
+              sizes="48px"
               className="absolute h-8 shrink-0 ml-36 sm:h-11 sm:ml-44"
             />
           </div>

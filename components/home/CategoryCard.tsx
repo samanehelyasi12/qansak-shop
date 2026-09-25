@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Category } from "@/types/category";
 
 interface CategoryCardProps {
@@ -12,9 +13,12 @@ export default function CategoryCard({ category }: CategoryCardProps) {
       className="group block overflow-hidden rounded-xl border border-cream bg-white shadow-sm transition hover:shadow-lg"
     >
       <div className="aspect-[4/3] overflow-hidden bg-cream">
-        <img
+        <Image
           src={category.image}
           alt={category.name}
+          width={1254}
+          height={1254}
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
           className="h-full w-full object-cover transition group-hover:scale-105"
         />
       </div>

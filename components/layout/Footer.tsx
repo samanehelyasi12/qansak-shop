@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Container from "@/components/ui/Container";
 
 const quickLinks = [
@@ -201,16 +202,22 @@ export default function Footer() {
       </Container>
 
       {/* عکس‌های تزئینی لبه پایین */}
-      <img
+      <Image
         src="/images/decor/footer-left.webp"
         alt=""
         aria-hidden="true"
+        width={1508}
+        height={1043}
+        sizes="288px"
         className="pointer-events-none absolute bottom-0 left-0 z-0 w-40 select-none opacity-90 sm:w-56 lg:w-72"
       />
-      <img
+      <Image
         src="/images/decor/footer-right.webp"
         alt=""
         aria-hidden="true"
+        width={1530}
+        height={1028}
+        sizes="288px"
         className="pointer-events-none absolute bottom-0 right-0 z-0 w-40 select-none opacity-90 sm:w-56 lg:w-72"
       />
     </footer>

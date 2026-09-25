@@ -1,4 +1,3 @@
-import Container from "@/components/ui/Container";
 import Link from "next/link";
 import Image from "next/image";
 import CakeCarousel from "./CakeCarousel";
@@ -28,11 +27,12 @@ export default function Hero() {
             <br />
             <span className="text-berry mr-[120px] text-1xl ">تکه خوشحالی</span>
           </h1>
-          <img
+          <Image
             src="/images/products/khat.webp"
             alt=""
             width={60}
             height={60}
+            sizes="60px"
             className="mt-[-120px] absolute mr-[130px] animate-fade-up [animation-delay:0.35s]"
           />
 
@@ -80,9 +80,12 @@ export default function Hero() {
             </svg>
 
             <Link href="/products" aria-label="مشاهده همه محصولات">
-              <img
+              <Image
                 src="/images/hero/order-badge.webp"
                 alt="مشاهده همه محصولات"
+                width={1254}
+                height={1254}
+                sizes="80px"
                 className="h-16 w-16 origin-bottom animate-wiggle sm:h-20 sm:w-20"
               />
             </Link>
@@ -154,11 +157,12 @@ export default function Hero() {
 
         {/* تیتر با علامت‌های تزئینی بالای گوشه‌ها */}
         <div className="relative  mt-5 animate-fade-up [animation-delay:0.15s]">
-          <img
+          <Image
             src="/images/products/khat.webp"
             alt=""
             width={40}
             height={40}
+            sizes="40px"
             className="absolute -top-3 -right-2 h-7 w-7"
           />
           <svg
@@ -221,9 +225,12 @@ export default function Hero() {
             />
           </svg>
           <Link href="/products" aria-label="مشاهده همه محصولات">
-            <img
+            <Image
               src="/images/hero/order-badge.webp"
               alt="مشاهده همه محصولات"
+              width={1254}
+              height={1254}
+              sizes="64px"
               className="h-14 w-14 origin-bottom animate-wiggle sm:h-16 sm:w-16"
             />
           </Link>

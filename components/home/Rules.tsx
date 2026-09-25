@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Leaf, Gift, Heart, Bike } from "lucide-react";
 
 const rules = [
@@ -86,9 +87,12 @@ export default function Rules() {
             <div className="absolute inset-0 mx-auto my-auto h-[80%] w-[80%] translate-x-[10%] rounded-full bg-gradient-to-br from-white/80 via-pink-100/60 to-qandek-peach/40 blur-2xl" />
             {/* سایه‌ی کف */}
             <div className="absolute bottom-0 left-1/2 h-8 w-[55%] -translate-x-1/2 rounded-full bg-berry/15 blur-xl" />
-            <img
+            <Image
               src="/images/decor/strawberry-cup.webp"
               alt="توت فرنگی تازه در فنجان صورتی"
+              width={1294}
+              height={1216}
+              sizes="(min-width: 1024px) 30vw, (min-width: 640px) 62vw, 70vw"
               className="relative z-10 mx-auto w-[75%] drop-shadow-2xl transition-transform duration-700 hover:scale-105 sm:w-[65%] lg:w-[85%]"
             />
           </div>

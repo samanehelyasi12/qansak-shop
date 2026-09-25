@@ -1,6 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
+import Image from "next/image";
 import Container from "@/components/ui/Container";
 
 const reviews = [
@@ -36,10 +37,13 @@ export default function CustomerReviews() {
           <h2 className="text-lg font-bold text-cocoa sm:text-xl lg:text-2xl">
             تجربه شیرین دیگران
           </h2>
-          <img
+          <Image
             src="/images/decor/piping-bag.webp"
             alt=""
             aria-hidden="true"
+            width={1148}
+            height={1370}
+            sizes="32px"
             className="h-7 w-7 -translate-y-0.5 sm:h-8 sm:w-8"
           />
         </div>
@@ -59,6 +63,12 @@ export default function CustomerReviews() {
               {/* هدر کارت: آواتار + اسم + تاریخ + ستاره */}
               <div className="relative z-10 flex items-start gap-3">
                 <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-full border-[3px] border-white shadow-sm sm:h-16 sm:w-16">
+                  {/* Intentionally a raw <img>: these avatars are SVG files.
+                      next/image's optimizer rejects SVG and returns HTTP 400
+                      unless `dangerouslyAllowSVG` is enabled globally, which
+                      would also enable unsanitised SVG serving site-wide.
+                      Verified: /_next/image?url=/images/avatars/user1.svg => 400. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={item.avatar}
                     alt={item.name}

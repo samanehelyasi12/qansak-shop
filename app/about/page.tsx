@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Image from "next/image";
 import Container from "@/components/ui/Container";
 import { Leaf, Gift, Truck, Heart, Star, Clock } from "lucide-react";
 
@@ -46,9 +47,12 @@ export default function AboutPage() {
           {/* عکس - سمت راست */}
           <div className="w-full shrink-0 lg:w-2/5">
             <div className="overflow-hidden">
-              <img
+              <Image
                 src="/images/decor/about-us.webp"
                 alt="قندک - شیرینی‌سرا"
+                width={1086}
+                height={1448}
+                sizes="(min-width: 1024px) 36vw, 92vw"
                 className="relative -top-12 w-full object-cover"
               />
             </div>

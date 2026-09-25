@@ -374,9 +374,12 @@ export default function Header() {
                                       }}
                                       className="flex cursor-pointer items-center gap-3 px-3 py-2.5 transition-colors duration-150 hover:bg-qandek-pink/20"
                                     >
-                                      <img
+                                      <Image
                                         src={product.images[0]}
                                         alt=""
+                                        width={36}
+                                        height={36}
+                                        sizes="36px"
                                         className="h-9 w-9 shrink-0 rounded-lg bg-qandek-pink/20 object-cover"
                                       />
                                       <span className="min-w-0 flex-1">

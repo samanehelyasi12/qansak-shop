@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import type { Product } from "@/types/product";
 
 interface CartItemProps {
@@ -23,9 +24,12 @@ export default function CartItem({
   return (
     <article className="flex gap-4 rounded-xl border border-cream bg-white p-4 shadow-sm">
       <Link href={`/products/${product.slug}`} className="flex-shrink-0">
-        <img
+        <Image
           src={product.images[0]}
           alt={product.name}
+          width={96}
+          height={96}
+          sizes="96px"
           className="h-24 w-24 object-cover rounded-lg"
         />
       </Link>
