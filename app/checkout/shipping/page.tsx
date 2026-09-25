@@ -55,7 +55,9 @@ export default function ShippingPage() {
         JSON.stringify({ customer, paymentMethod })
       );
       router.push("/checkout/payment");
-    } finally {
+    } catch {
+      // sessionStorage ممکن است در حالت خصوصی/محدود در دسترس نباشد.
+      // در آن حالت کاربر نباید در حالت «در حال پردازش» گیر کند.
       setIsSubmitting(false);
     }
   };

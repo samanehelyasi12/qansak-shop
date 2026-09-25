@@ -73,7 +73,7 @@ export default function CheckoutPage() {
                   <input type="radio" name="payment" value="online" className="h-4 w-4 text-caramel" defaultChecked />
                   <div>
                     <p className="font-medium text-cocoa">پرداخت آنلاین</p>
-                    <p className="text-sm text-cocoa/60">کارت به کارت، درگاه بانکی، وش cân</p>
+                    <p className="text-sm text-cocoa/60">کارت به کارت، درگاه بانکی، ولت</p>
                   </div>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">

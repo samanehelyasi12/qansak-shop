@@ -4,16 +4,8 @@ import { useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import type { Product } from "@/types/product";
 
-// تا وقتی «reviews» به تایپ اصلی Product اضافه نشده،
-// موقتاً همین‌جا تعریفش می‌کنیم تا ارور implicit any نگیریم
-interface ProductReview {
-  author: string;
-  rating: number; // عدد ۱ تا ۵
-  comment: string;
-}
-
 interface ProductTabsProps {
-  product: Product & { reviews?: ProductReview[] };
+  product: Product;
 }
 
 type TabKey = "description" | "reviews";

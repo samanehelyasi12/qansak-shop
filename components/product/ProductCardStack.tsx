@@ -13,14 +13,24 @@ export default function ProductCardStack({ products }: ProductCardStackProps) {
   const [index, setIndex] = useState(0);
   const total = products.length;
 
+  // بدون این گارد، `% total` روی صفر NaN می‌داد و روی `product.id` دسترسی
+  // به undefined رخ می‌داد (runtime exception).
+  if (total === 0) {
+    return null;
+  }
+
   const next = () => setIndex((i) => (i + 1) % total);
   const prev = () => setIndex((i) => (i - 1 + total) % total);
 
-  // فقط ۴ تا کارت پشت‌سرهم نشون بده (جلویی + ۳ تا پشتش)
-  const visibleStack = [0, 1, 2, 3].map((offset) => {
-    const i = (index + offset) % total;
-    return { product: products[i], offset };
-  });
+  // فقط ۴ تا کارت پشت‌سرهم نشون بده (جلویی + ۳ تا پشتش).
+  // اگر محصولات کمتر از ۴ تا باشند، همان تعداد موجود تکرار می‌شود تا
+  // key تکراری در React نداشته باشیم.
+  const visibleStack = [0, 1, 2, 3]
+    .filter((offset) => offset < total)
+    .map((offset) => {
+      const i = (index + offset) % total;
+      return { product: products[i], offset };
+    });
 
   return (
     <div className="flex items-center justify-center gap-4 sm:gap-8">

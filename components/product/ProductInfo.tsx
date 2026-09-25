@@ -31,7 +31,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-caramel" aria-label={`امتیاز ${product.rating} از ۵`}>
+          {/* ستاره‌ها تزئینی‌اند؛ معنای امتیاز از طریق aria-label و عدد کنارش منتقل می‌شود. */}
+          <span className="text-caramel" aria-hidden="true">
             {Array.from({ length: 5 }).map((_, i) => (
               <span key={i} className={i < Math.floor(product.rating) ? "text-caramel" : "text-cream"}>
                 ★
@@ -39,6 +40,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             ))}
           </span>
           <span className="text-sm text-cocoa/60">({product.rating})</span>
+          {/* معنای کامل امتیاز برای صفحه‌خوان؛ هیچ اثر بصری ندارد. */}
+          <span className="sr-only">{`امتیاز ${product.rating} از ۵`}</span>
         </div>
       </div>
 

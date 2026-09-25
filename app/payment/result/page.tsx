@@ -100,11 +100,11 @@ export default async function PaymentResultPage({ searchParams }: PaymentResultP
               <div className="rounded-3xl border border-white/50 bg-white/40 p-6 text-center shadow-[0_16px_50px_rgba(80,40,30,0.10)] backdrop-blur-xl sm:p-8">
                 <div className="mb-5">
                   {isSuccess ? (
-                    <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-pistachio/15 text-pistachio text-3xl" role="img" aria-hidden="true">
+                    <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-pistachio/15 text-pistachio text-3xl" aria-hidden="true">
                       ✓
                     </span>
                   ) : (
-                    <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-berry/15 text-berry text-3xl" role="img" aria-hidden="true">
+                    <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-berry/15 text-berry text-3xl" aria-hidden="true">
                       ✕
                     </span>
                   )}

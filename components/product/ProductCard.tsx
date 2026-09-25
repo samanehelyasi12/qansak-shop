@@ -51,8 +51,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       <button
         type="button"
         aria-label={
-          isFavorite ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"
+          isFavorite
+            ? `حذف ${product.name} از علاقه‌مندی‌ها`
+            : `افزودن ${product.name} به علاقه‌مندی‌ها`
         }
+        aria-pressed={isFavorite}
         onClick={(e) => {
           e.preventDefault();
           setIsFavorite((v) => !v);
@@ -73,8 +76,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           </h3>
         </Link>
 
-        <p className="line-clamp-1 text-[9px] leading-3.5 text-white/70 sm:text-xs sm:leading-5"></p>
-
         <div className="mt-0.5 flex min-w-0 flex-wrap items-baseline gap-1 sm:mt-1 sm:gap-2">
           {product.discountPrice && (
             <span className="text-[8px] text-white/50 line-through sm:text-[10px] lg:text-xs">
@@ -90,7 +91,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="mt-1 flex min-w-0 items-center gap-1.5 sm:mt-2 sm:gap-3">
           <button
             type="button"
-            aria-label="افزودن سریع به سبد"
+            aria-label={`افزودن سریع ${product.name} به سبد`}
             disabled={!product.inStock}
             onClick={handleQuickAdd}
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-white/70 text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40 sm:h-9 sm:w-9 lg:h-11 lg:w-11"

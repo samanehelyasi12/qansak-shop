@@ -42,3 +42,7 @@ next-env.d.ts
 
 # OS
 Thumbs.db
+
+# Python tooling caches (committed by accident in the past)
+__pycache__/
+*.py[cod]

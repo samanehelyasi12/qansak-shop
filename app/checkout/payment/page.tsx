@@ -39,37 +39,42 @@ export default function PaymentPage() {
   }
 
   const handlePayWithZarinpal = async () => {
+    // قفل ساده تا کلیک دوبارهٔ کاربر در حین پردازش، دو ناوبری نسازد.
+    if (isRedirecting) return;
+
+    // ============================================================
+    // TODO: اتصال واقعی به زرین‌پال (بعد از آماده شدن بک‌اند جنگو)
+    // ------------------------------------------------------------
+    // ۱. یک درخواست POST به اندپوینت جنگو بزنید، مثلاً:
+    //      POST /api/payments/zarinpal/request/
+    //      body: { amount: total, mobile: customer.phone, description: "پرداخت سفارش قندک" }
+    //
+    // ۲. جنگو سمت سرور با merchant_id به زرین‌پال وصل می‌شه (endpoint:
+    //      https://payment.zarinpal.com/pg/v4/payment/request.json)
+    //    و در پاسخ یک "authority" برمی‌گردونه.
+    //
+    // ۳. جنگو از روی authority یک payment_url می‌سازه:
+    //      https://www.zarinpal.com/pg/StartPay/{authority}
+    //    و اون رو به فرانت برمی‌گردونه.
+    //
+    // ۴. اینجا کاربر رو با ریدایرکت کامل (نه fetch) به اون آدرس می‌فرستید:
+    //      window.location.href = data.payment_url
+    //
+    // ۵. بعد از پرداخت، زرین‌پال کاربر رو به callback_url جنگو برمی‌گردونه،
+    //    جنگو تراکنش رو verify می‌کنه (/pg/v4/payment/verify.json) و در نهایت
+    //    کاربر رو ریدایرکت می‌کنه به:
+    //      /payment/result?order=ORD-XXXX&status=success یا failed
+    //
+    // فعلاً چون درگاه هنوز در بک‌اند فعال نیست، یک تأخیر مصنوعی می‌ذاریم
+    // و مستقیم به صفحه نتیجه (حالت موفق) می‌ریم تا فلوی صفحات کامل دیده بشه:
+    // ============================================================
     setIsRedirecting(true);
     try {
-      // ============================================================
-      // TODO: اتصال واقعی به زرین‌پال (بعد از آماده شدن بک‌اند جنگو)
-      // ------------------------------------------------------------
-      // ۱. یک درخواست POST به اندپوینت جنگو بزنید، مثلاً:
-      //      POST /api/payments/zarinpal/request/
-      //      body: { amount: total, mobile: customer.phone, description: "پرداخت سفارش قندک" }
-      //
-      // ۲. جنگو سمت سرور با merchant_id به زرین‌پال وصل می‌شه (endpoint:
-      //      https://payment.zarinpal.com/pg/v4/payment/request.json)
-      //    و در پاسخ یک "authority" برمی‌گردونه.
-      //
-      // ۳. جنگو از روی authority یک payment_url می‌سازه:
-      //      https://www.zarinpal.com/pg/StartPay/{authority}
-      //    و اون رو به فرانت برمی‌گردونه.
-      //
-      // ۴. اینجا کاربر رو با ریدایرکت کامل (نه fetch) به اون آدرس می‌فرستید:
-      //      window.location.href = data.payment_url
-      //
-      // ۵. بعد از پرداخت، زرین‌پال کاربر رو به callback_url جنگو برمی‌گردونه،
-      //    جنگو تراکنش رو verify می‌کنه (/pg/v4/payment/verify.json) و در نهایت
-      //    کاربر رو ریدایرکت می‌کنه به:
-      //      /payment/result?order=ORD-XXXX&status=success یا failed
-      //
-      // فعلاً چون درگاه هنوز در بک‌اند فعال نیست، یک تأخیر مصنوعی می‌ذاریم
-      // و مستقیم به صفحه نتیجه (حالت موفق) می‌ریم تا فلوی صفحات کامل دیده بشه:
-      // ============================================================
       await new Promise((resolve) => setTimeout(resolve, 1400));
       router.push("/payment/result?order=ORD-12345");
-    } finally {
+    } catch {
+      // فقط در خطا حالت «در حال اتصال» برمی‌گردد؛ در موفقیت تا لحظهٔ ناوبری
+      // فعال می‌ماند تا کاربر نتواند دوباره کلیک کند.
       setIsRedirecting(false);
     }
   };

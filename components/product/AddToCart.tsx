@@ -38,11 +38,15 @@ export default function AddToCart({
             onClick={() => setQuantity(Math.max(1, quantity - 1))}
             disabled={quantity <= 1 || disabled}
             className="px-4 py-2 text-cocoa hover:bg-cream disabled:opacity-50"
-            aria-label="کم کردن تعداد"
+            aria-label={`کم کردن تعداد ${product.name}`}
           >
             −
           </button>
-          <span className="w-12 text-center text-lg font-medium text-cocoa">
+          <span
+            className="w-12 text-center text-lg font-medium text-cocoa"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             {quantity}
           </span>
           <button
@@ -50,7 +54,7 @@ export default function AddToCart({
             onClick={() => setQuantity(quantity + 1)}
             disabled={disabled}
             className="px-4 py-2 text-cocoa hover:bg-cream disabled:opacity-50"
-            aria-label="افزایش تعداد"
+            aria-label={`افزایش تعداد ${product.name}`}
           >
             +
           </button>

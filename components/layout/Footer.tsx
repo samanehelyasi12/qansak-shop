@@ -21,8 +21,8 @@ const supportLinks = [
   { label: "قوانین و مقررات", href: "/terms" },
 ];
 
-const TELEGRAM_URL = "https:" + "//t.me/qandak";
-const INSTAGRAM_URL = "https:" + "//instagram.com/qandak";
+const TELEGRAM_URL = "https://t.me/qandak";
+const INSTAGRAM_URL = "https://instagram.com/qandak";
 
 
 function SocialIcon({

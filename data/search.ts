@@ -26,7 +26,7 @@ export function searchProducts(query: string): Product[] {
 
   const target = normalize(trimmed);
   const categories = getAllCategories();
-  const categoryNameById = new Map(
+  const categoryNameBySlug = new Map(
     categories.map((category) => [category.slug, category.name]),
   );
 
@@ -35,7 +35,7 @@ export function searchProducts(query: string): Product[] {
       [
         product.name,
         product.description,
-        categoryNameById.get(product.categorySlug) ?? "",
+        categoryNameBySlug.get(product.categorySlug) ?? "",
       ].join(" "),
     );
     return haystack.includes(target);
