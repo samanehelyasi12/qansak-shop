@@ -5,6 +5,7 @@ import Link from "next/link";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
+import TermsContent from "@/components/legal/TermsContent";
 
 export default function RegisterForm() {
   const [termsOpen, setTermsOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function RegisterForm() {
           name="name"
           label="نام و نام خانوادگی"
           placeholder="نام و نام خانوادگی"
+          autoComplete="name"
           required
         />
 
@@ -25,6 +27,7 @@ export default function RegisterForm() {
           name="identifier"
           label="ایمیل یا شماره موبایل"
           placeholder="email@example.com یا ۰۹۱۲۳۴۵۶۷۸۹"
+          autoComplete="username"
           required
         />
 
@@ -35,6 +38,7 @@ export default function RegisterForm() {
             type="password"
             label="رمز عبور"
             placeholder="رمز عبور"
+            autoComplete="new-password"
             required
           />
 
@@ -43,6 +47,7 @@ export default function RegisterForm() {
             type="password"
             label="تکرار رمز عبور"
             placeholder="تکرار رمز عبور"
+            autoComplete="new-password"
             required
           />
         </div>
@@ -115,105 +120,7 @@ export default function RegisterForm() {
         title="قوانین و شرایط قندک"
       >
         <div className="space-y-6 text-sm leading-7 text-cocoa/70">
-          <section>
-            <h3 className="mb-2 font-bold text-cocoa">
-              ۱. پذیرش شرایط
-            </h3>
-
-            <p>
-              با ایجاد حساب کاربری و استفاده از خدمات قندک، شما تأیید
-              می‌کنید که این شرایط را مطالعه کرده و با مفاد آن موافق
-              هستید.
-            </p>
-          </section>
-
-          <section>
-            <h3 className="mb-2 font-bold text-cocoa">
-              ۲. اطلاعات حساب کاربری
-            </h3>
-
-            <p>
-              کاربر موظف است اطلاعات صحیح و به‌روز وارد کند و مسئولیت
-              حفظ اطلاعات ورود به حساب کاربری خود را بر عهده دارد.
-            </p>
-          </section>
-
-          <section>
-            <h3 className="mb-2 font-bold text-cocoa">
-              ۳. ثبت سفارش
-            </h3>
-
-            <p>
-              سفارش پس از تکمیل مراحل ثبت و پرداخت، مطابق وضعیت نمایش داده
-              شده در سایت پردازش خواهد شد. قیمت و موجودی محصولات ممکن است
-              تغییر کند و سفارش بر اساس اطلاعات زمان ثبت نهایی بررسی می‌شود.
-            </p>
-          </section>
-
-          <section>
-            <h3 className="mb-2 font-bold text-cocoa">
-              ۴. پرداخت
-            </h3>
-
-            <p>
-              تکمیل موفقیت‌آمیز پرداخت به معنای ثبت درخواست پرداخت برای
-              سفارش است. در صورت ناموفق بودن پرداخت، سفارش مطابق وضعیت
-              تعیین‌شده در سیستم مدیریت خواهد شد.
-            </p>
-          </section>
-
-          <section>
-            <h3 className="mb-2 font-bold text-cocoa">
-              ۵. ارسال و تحویل
-            </h3>
-
-            <p>
-              سفارش‌ها بر اساس محدوده و زمان‌بندی اعلام‌شده توسط قندک ارسال
-              می‌شوند. زمان تحویل ممکن است تحت تأثیر شرایط خارج از کنترل
-              مجموعه قرار بگیرد.
-            </p>
-          </section>
-
-          <section>
-            <h3 className="mb-2 font-bold text-cocoa">
-              ۶. لغو یا تغییر سفارش
-            </h3>
-
-            <p>
-              شرایط لغو یا تغییر سفارش با توجه به وضعیت سفارش و نوع محصول
-              تعیین می‌شود. پس از شروع آماده‌سازی بعضی محصولات، امکان تغییر
-              یا لغو ممکن است محدود باشد.
-            </p>
-          </section>
-
-          <section>
-            <h3 className="mb-2 font-bold text-cocoa">
-              ۷. حریم خصوصی
-            </h3>
-
-            <p>
-              اطلاعات کاربران برای ایجاد حساب، پردازش سفارش و ارائه خدمات
-              استفاده می‌شود. نحوه نگهداری و استفاده از اطلاعات در سیاست
-              حریم خصوصی سایت توضیح داده خواهد شد.
-            </p>
-          </section>
-
-          <section>
-            <h3 className="mb-2 font-bold text-cocoa">
-              ۸. تغییر شرایط
-            </h3>
-
-            <p>
-              قندک می‌تواند در صورت نیاز شرایط استفاده را به‌روزرسانی کند.
-              نسخه جدید شرایط پس از انتشار در سایت قابل مشاهده خواهد بود.
-            </p>
-          </section>
-
-          <div className="rounded-2xl bg-qandek-cream/70 p-4 text-xs leading-6 text-cocoa/60">
-            این متن فعلاً برای طراحی و محتوای اولیه سایت است و قبل از
-            انتشار نهایی باید با شرایط واقعی کسب‌وکار و الزامات قانونی
-            محل فعالیت قندک تطبیق داده شود.
-          </div>
+          <TermsContent />
 
           <button
             type="button"

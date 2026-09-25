@@ -1,7 +1,7 @@
 export default function MembershipBanner() {
   return (
     <section
-      className="relative overflow-hidden mt-[-30px]  bg-containr bg-center py-20 sm:py-28"
+      className="relative overflow-hidden mt-[-30px]  bg-auto bg-center py-20 sm:py-28"
       style={{ backgroundImage: "url('/images/decor/discount-bg.webp')" }}
     >
       <div className="mx-auto max-w-7xl px-6">

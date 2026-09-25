@@ -10,8 +10,13 @@ interface SearchPageProps {
 }
 
 export const metadata: Metadata = {
-  title: "جستجو | قندک",
+  title: "جستجو",
   description: "جستجو در محصولات شیرینی‌سرای قندک",
+  // Faceted-search URLs must never be indexed, but we still follow their links.
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
@@ -57,6 +62,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               <input
                 type="search"
                 name="q"
+                aria-label="جستجوی محصولات"
                 defaultValue=""
                 placeholder="جستجو در قندک..."
                 className="flex-1 rounded-lg border border-caramel/30 bg-white px-4 py-2.5 text-cocoa focus:outline-none focus:ring-2 focus:ring-caramel"

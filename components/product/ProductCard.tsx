@@ -2,25 +2,38 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Heart, ShoppingBag } from "lucide-react";
 import type { Product } from "@/types/product";
+import { useCart } from "@/lib/cart/store";
+import { getEffectiveProductPrice } from "@/lib/pricing";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { addItem } = useCart();
   const [isFavorite, setIsFavorite] = useState(false);
-  const displayPrice = product.discountPrice || product.price;
+  const displayPrice = getEffectiveProductPrice(product);
+
+  const handleQuickAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // کارت ممکن است داخل ناحیه‌ای قرار بگیرد که کلیک را به لینک محصول می‌برد
+    event.preventDefault();
+    event.stopPropagation();
+    addItem(product, {}, 1);
+  };
 
   return (
     <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-3xl shadow-md transition-shadow hover:shadow-xl">
       {/* عکس محصول - تمام‌کارت */}
       <Link href={`/products/${product.slug}`} className="absolute inset-0">
-        <img
+        <Image
           src={product.images[0]}
           alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </Link>
 
@@ -79,6 +92,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             type="button"
             aria-label="افزودن سریع به سبد"
             disabled={!product.inStock}
+            onClick={handleQuickAdd}
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-white/70 text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40 sm:h-9 sm:w-9 lg:h-11 lg:w-11"
           >
             <ShoppingBag className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
@@ -87,6 +101,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <button
             type="button"
             disabled={!product.inStock}
+            onClick={handleQuickAdd}
             className="flex h-6 min-w-0 flex-1 items-center justify-center rounded-full bg-qandek-strawberry px-1.5 text-[9px] font-bold text-white transition hover:bg-qandek-strawberry/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-white/30 sm:h-7 sm:px-2 sm:text-xs lg:h-8 lg:px-3 lg:text-sm"
           >
             {product.inStock ? "افزودن به سبد" : "ناموجود"}

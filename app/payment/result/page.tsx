@@ -5,13 +5,18 @@ import Link from "next/link";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
+import type { PaymentResult } from "@/types/order";
 
 export const metadata: Metadata = {
-  title: "نتیجه پرداخت | قندک",
+  title: "نتیجه پرداخت",
   description: "مشاهده نتیجه تراکنش پرداخت سفارش",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
-const mockPayments: Record<string, any> = {
+const mockPayments: Record<string, PaymentResult> = {
   "ORD-12345": {
     orderId: "ORD-12345",
     trackingCode: "TRK-987654321",

@@ -9,6 +9,9 @@ import PreparationTime from "@/components/product/PreparationTime";
 import ProductClientWrapper from "@/components/product/ProductClientWrapper";
 import ProductTabs from "@/components/product/ProductTabs";
 import Container from "@/components/ui/Container";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import JsonLd from "@/components/seo/JsonLd";
+import { absoluteUrl, buildProductMetaDescription, siteName } from "@/lib/site";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -27,17 +30,89 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     return { title: "محصول یافت نشد" };
   }
 
+  const canonical = absoluteUrl(`/products/${product.slug}`);
+  const description = buildProductMetaDescription(product);
+
   return {
-    title: `${product.name} | قندک`,
-    description: product.description,
+    title: product.name,
+    description,
+    alternates: {
+      canonical,
+    },
     openGraph: {
-      title: `${product.name} | قندک`,
-      description: product.description,
+      title: `${product.name} | ${siteName}`,
+      description,
       type: "website",
-      images: product.images,
+      url: canonical,
+      // Absolute URLs are required by the OG spec; metadataBase cannot be
+      // relied on for arrays of plain strings.
+      images: product.images.map((image) => ({
+        url: absoluteUrl(image),
+        alt: product.name,
+      })),
     },
   };
 }
+
+/**
+ * Schema.org JSON-LD for the product.
+ *
+ * Only fields backed by real, currently-trusted data are emitted.
+ * `aggregateRating` and `review` are intentionally OMITTED: the product data is
+ * static/mock, so publishing rating structured data would be fabricated
+ * rich-result markup. Add it in a later batch once real user reviews exist.
+ */
+function buildProductJsonLd(product: {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  price: number;
+  discountPrice?: number;
+  images: string[];
+  categorySlug: string;
+  inStock: boolean;
+}) {
+  const effectivePrice = product.discountPrice ?? product.price;
+  const category = getCategoryBySlug(product.categorySlug);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    // Absolute image URLs are required by the spec.
+    image: product.images.map((image) => absoluteUrl(image)),
+    sku: product.id,
+    ...(category
+      ? {
+          category: category.name,
+        }
+      : {}),
+    brand: {
+      "@type": "Brand",
+      name: siteName,
+    },
+    url: absoluteUrl(`/products/${product.slug}`),
+    offers: {
+      "@type": "Offer",
+      url: absoluteUrl(`/products/${product.slug}`),
+      // Prices are stored in Toman; Schema.org/ISO-4217 expects IRR (Rial).
+      // 1 Toman = 10 Rial.
+      priceCurrency: "IRR",
+      price: effectivePrice * 10,
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+      seller: {
+        "@type": "Organization",
+        name: siteName,
+      },
+    },
+  };
+}
+
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
@@ -51,6 +126,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <div className="py-8 sm:py-12">
+      <JsonLd data={buildProductJsonLd(product)} />
+      {/* Describes the breadcrumb that is already visible below; renders no UI. */}
+      <BreadcrumbJsonLd
+        items={[
+          { name: "خانه", href: "/" },
+          { name: "محصولات", href: "/products" },
+          {
+            name: category?.name || product.categorySlug,
+            href: `/categories/${product.categorySlug}`,
+          },
+          { name: product.name },
+        ]}
+      />
       <Container>
         <nav className="mb-6 sm:mb-8" aria-label="breadcrumb">
           <ol className="flex flex-wrap items-center gap-2 text-xs text-cocoa/60 sm:text-sm">

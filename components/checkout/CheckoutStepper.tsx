@@ -16,6 +16,13 @@ const steps = [
   { key: "confirm", label: "تایید سفارش", icon: ConfirmIcon },
 ] as const;
 
+/** ارقام فارسی برای متن فقط-خوانده‌شونده با صفحه‌خوان. */
+const PERSIAN_DIGITS = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+
+function toPersianDigits(value: number): string {
+  return String(value).replace(/\d/g, (digit) => PERSIAN_DIGITS[Number(digit)]);
+}
+
 export default function CheckoutStepper({ currentStep }: CheckoutStepperProps) {
   // در اولین رندر، مرحله‌ی قبلی (ذخیره‌شده از صفحه‌ی قبل) رو نشون می‌دیم؛
   // بعد از mount، با یک تأخیر کوتاه به مرحله‌ی واقعی صفحه می‌رسیم تا خط/آیکن‌ها
@@ -79,7 +86,16 @@ export default function CheckoutStepper({ currentStep }: CheckoutStepperProps) {
           const Icon = step.icon;
 
           return (
-            <li key={step.key} className="relative z-10 flex flex-1 flex-col items-center">
+            <li
+              key={step.key}
+              className="relative z-10 flex flex-1 flex-col items-center"
+              aria-current={isActive ? "step" : undefined}
+            >
+              {/* معادل متنی وضعیت مرحله برای صفحه‌خوان؛ هیچ اثر بصری ندارد. */}
+              <span className="sr-only">
+                {`مرحله ${toPersianDigits(stepNumber)} از ${toPersianDigits(steps.length)}`}
+                {isActive ? " (مرحله فعلی)" : isDone ? " (انجام شده)" : ""}
+              </span>
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-500 ease-out ${
                   isDone

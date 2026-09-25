@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { InputHTMLAttributes } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -12,7 +13,9 @@ export default function Input({
   id,
   ...props
 }: InputProps) {
-  const inputId = id || `input-${Math.random()}`;
+  const autoId = useId();
+  const inputId = id || autoId;
+  const errorId = `${inputId}-error`;
 
   return (
     <div className="w-full">
@@ -23,12 +26,18 @@ export default function Input({
       )}
       <input
         id={inputId}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
         className={`w-full px-4 py-2 border rounded-lg text-cocoa bg-white focus:outline-none focus:ring-2 focus:ring-caramel ${
           error ? "border-berry" : "border-gray-300"
         } ${className}`}
         {...props}
       />
-      {error && <p className="mt-1 text-sm text-berry">{error}</p>}
+      {error && (
+        <p id={errorId} className="mt-1 text-sm text-berry">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

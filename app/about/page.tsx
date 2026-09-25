@@ -3,7 +3,7 @@ import Container from "@/components/ui/Container";
 import { Leaf, Gift, Truck, Heart, Star, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "درباره ما | قندک",
+  title: "درباره ما",
   description:
     "شیرینی‌سرای قندک با بیش از ۱۰ سال تجربه در تولید کیک، شیرینی، نان و شکلات دست‌ساز",
 };

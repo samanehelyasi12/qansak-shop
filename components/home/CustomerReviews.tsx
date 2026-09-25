@@ -72,7 +72,7 @@ export default function CustomerReviews() {
                   <p className="mt-0.5 text-[11px] text-cocoa/50 sm:text-xs">
                     {item.date}
                   </p>
-                  <div className="mt-1.5 flex items-center gap-0.5">
+                  <div className="mt-1.5 flex items-center gap-0.5" aria-hidden="true">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
@@ -84,6 +84,8 @@ export default function CustomerReviews() {
                       />
                     ))}
                   </div>
+                  {/* معادل متنی امتیاز برای صفحه‌خوان؛ هیچ اثر بصری ندارد. */}
+                  <span className="sr-only">{`امتیاز: ${item.rating} از ۵`}</span>
                 </div>
               </div>
 

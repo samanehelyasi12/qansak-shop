@@ -84,15 +84,19 @@ function roleStyle(role: Role, isMobile: boolean): React.CSSProperties {
 export default function CakeCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 640 : false,
-  );
+  // مقدار اولیه همیشه false است تا رندر سرور و کلاینت یکسان باشد
+  // (hydration mismatch)؛ مقدار واقعی بعد از mount از matchMedia خوانده می‌شود.
+  const [isMobile, setIsMobile] = useState(false);
   const lockTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 640);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const mediaQuery = window.matchMedia("(max-width: 639px)");
+    const syncIsMobile = () => setIsMobile(mediaQuery.matches);
+
+    syncIsMobile();
+    mediaQuery.addEventListener("change", syncIsMobile);
+
+    return () => mediaQuery.removeEventListener("change", syncIsMobile);
   }, []);
 
   useEffect(() => {

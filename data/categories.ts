@@ -39,7 +39,7 @@ export const categories: Category[] = [
   {
     id: "cat-6",
     slug: "cake-mix",
-    name: "کیک ترکیبی",
+    name: "پودر کیک",
     description: "ترکیب چند طعم کیک در یک جعبه",
     image: "/images/categories/cake-mix.webp",
   },
@@ -60,14 +60,14 @@ export const categories: Category[] = [
   {
     id: "cat-9",
     slug: "sable",
-    name: "شیرینی سابله",
+    name: " سابله کیک",
     description: "شیرینی خشک کره‌ای فرانسوی",
     image: "/images/categories/sable.webp",
   },
   {
     id: "cat-10",
     slug: "candy",
-    name: "آب‌نبات",
+    name: "قند",
     description: "آب‌نبات‌های دست‌ساز رنگارنگ",
     image: "/images/categories/candy.webp",
   },

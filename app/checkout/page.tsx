@@ -4,7 +4,7 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 
 export const metadata: Metadata = {
-  title: "تسویه حساب | قندک",
+  title: "تسویه حساب",
   description: "تکمیل خرید و پرداخت سفارش در شیرینی‌سرای قندک",
 };
 

@@ -6,8 +6,12 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 
 export const metadata: Metadata = {
-  title: "ورود | قندک",
+  title: "ورود",
   description: "ورود به حساب کاربری شیرینی‌سرای قندک",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function LoginPage() {
@@ -78,6 +82,7 @@ export default function LoginPage() {
                       name="identifier"
                       label="ایمیل یا شماره موبایل"
                       placeholder="email@example.com یا ۰۹۱۲۳۴۵۶۷۸۹"
+                      autoComplete="username"
                       required
                     />
 
@@ -86,6 +91,7 @@ export default function LoginPage() {
                       type="password"
                       label="رمز عبور"
                       placeholder="رمز عبور"
+                      autoComplete="current-password"
                       required
                     />
 

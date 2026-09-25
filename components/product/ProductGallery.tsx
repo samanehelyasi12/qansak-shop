@@ -2,6 +2,7 @@
 
 import type { Product } from "@/types/product";
 import { useState } from "react";
+import Image from "next/image";
 
 interface ProductGalleryProps {
   product: Product;
@@ -20,12 +21,19 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
   return (
     <div className="space-y-3">
       {/* عکس اصلی */}
-      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-cream sm:aspect-[4/3]">
+      <div
+        id="product-gallery-main"
+        className="relative aspect-square w-full overflow-hidden rounded-2xl bg-cream sm:aspect-[4/3]"
+      >
         {images.length > 0 && (
-          <img
+          <Image
             src={images[selectedIndex]}
             alt={`${product.name} - عکس ${selectedIndex + 1}`}
-            className="h-full w-full object-cover"
+            fill
+            // This is the product page's LCP image, so it is preloaded.
+            priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover"
           />
         )}
       </div>
@@ -43,10 +51,18 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
                   ? "border-caramel"
                   : "border-cream hover:border-caramel/50"
               }`}
-              aria-label={`نمایش عکس ${index + 1}`}
-              aria-current={index === selectedIndex ? "true" : "false"}
+              aria-label={`نمایش عکس ${index + 1} از ${product.name}`}
+              aria-controls="product-gallery-main"
+              aria-pressed={index === selectedIndex}
             >
-              <img src={image} alt="" className="h-full w-full object-cover" />
+              <Image
+                src={image}
+                alt=""
+                width={256}
+                height={256}
+                sizes="96px"
+                className="h-full w-full object-cover"
+              />
             </button>
           ))}
         </div>

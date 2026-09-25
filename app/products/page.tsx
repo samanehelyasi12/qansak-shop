@@ -6,7 +6,7 @@ import Container from "@/components/ui/Container";
 import type { Product } from "@/types/product";
 
 export const metadata: Metadata = {
-  title: "فروشگاه | قندک",
+  title: "فروشگاه",
   description: "تمام محصولات قندک شامل کیک، شیرینی، نان و شکلات دست‌ساز",
 };
 

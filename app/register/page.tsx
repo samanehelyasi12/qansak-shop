@@ -4,8 +4,12 @@ import Container from "@/components/ui/Container";
 import RegisterForm from "@/components/auth/RegisterForm";
 
 export const metadata: Metadata = {
-  title: "ثبت‌نام | قندک",
+  title: "ثبت‌نام",
   description: "ساخت حساب کاربری در شیرینی‌سرای قندک",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RegisterPage() {

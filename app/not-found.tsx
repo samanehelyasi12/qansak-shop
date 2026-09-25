@@ -1,4 +1,20 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+/**
+ * Metadata only — the visible 404 layout is untouched.
+ *
+ * NOTE: the "صفحه مورد نظر یافت نشد" line is intentionally left as a <p>.
+ * globals.css applies the Molsaq Arabic font-family to h1–h6, so promoting it
+ * to an <h1> would visibly change its typeface. Reported as deferred instead.
+ */
+export const metadata: Metadata = {
+  title: "صفحه یافت نشد",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function NotFound() {
   return (

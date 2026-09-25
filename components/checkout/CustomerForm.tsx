@@ -43,6 +43,7 @@ export default function CustomerForm({
           name="firstName"
           label="نام"
           placeholder=""
+          autoComplete="given-name"
           value={formData.firstName}
           onChange={(e) => handleChange("firstName", e.target.value)}
           required
@@ -51,6 +52,7 @@ export default function CustomerForm({
           name="lastName"
           label="نام خانوادگی"
           placeholder=""
+          autoComplete="family-name"
           value={formData.lastName}
           onChange={(e) => handleChange("lastName", e.target.value)}
           required
@@ -61,6 +63,7 @@ export default function CustomerForm({
         type="tel"
         label="شماره تماس"
         placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+        autoComplete="tel"
         value={formData.phone}
         onChange={(e) => handleChange("phone", e.target.value)}
         required
@@ -72,6 +75,7 @@ export default function CustomerForm({
         <textarea
           id="address"
           name="address"
+          autoComplete="street-address"
           rows={3}
           className="w-full px-4 py-2 border border-cream rounded-lg text-cocoa bg-[#fffaf8] focus:outline-none focus:ring-2 focus:ring-caramel"
           placeholder="آدرس دقیق تحویل (داخل شهر) را وارد کنید"

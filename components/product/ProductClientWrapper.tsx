@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Product } from "@/types/product";
+import { useCart } from "@/lib/cart/store";
 import ProductOptions from "./ProductOptions";
 import AddToCart from "./AddToCart";
 
@@ -10,14 +11,19 @@ interface ProductClientWrapperProps {
 }
 
 export default function ProductClientWrapper({ product }: ProductClientWrapperProps) {
+  const { addItem } = useCart();
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
 
   const handleOptionChange = (optionId: string, valueId: string) => {
     setSelectedOptions((prev) => ({ ...prev, [optionId]: valueId }));
   };
 
-  const handleAddToCart = (product: Product, options: Record<string, string>, quantity: number) => {
-    console.log("Add to cart:", { product: product.id, options, quantity });
+  const handleAddToCart = (
+    target: Product,
+    options: Record<string, string>,
+    quantity: number,
+  ) => {
+    addItem(target, options, quantity);
   };
 
   return (

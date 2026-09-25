@@ -7,6 +7,8 @@ import { getCategoryBySlug, getAllCategories } from "@/data/categories";
 import { getProductsByCategory } from "@/data/products";
 import ProductCard from "@/components/product/ProductCard";
 import Container from "@/components/ui/Container";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { absoluteUrl } from "@/lib/site";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
@@ -25,9 +27,30 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     return { title: "دسته‌بندی یافت نشد" };
   }
 
+  const products = getProductsByCategory(slug);
+  const hasProducts = products.length > 0;
+
+  // Each description combines the category's own copy with its real, current
+  // product names, so every category gets genuinely distinct text rather than
+  // the same sentence with only the name swapped in.
+  const description = hasProducts
+    ? `${category.description} — شامل ${products
+        .map((product) => product.name)
+        .join("، ")}. سفارش آنلاین از شیرینی‌سرای قندک.`
+    : `${category.description} — سفارش آنلاین از شیرینی‌سرای قندک.`;
+
   return {
-    title: `${category.name} | قندک`,
-    description: category.description || `${category.name} در قندک`,
+    title: `خرید ${category.name}`,
+    description,
+    alternates: {
+      canonical: absoluteUrl(`/categories/${category.slug}`),
+    },
+    // A category with no products renders only the empty-state message, so it
+    // is thin content. Keep it crawlable (it still passes link equity) but out
+    // of the index. Links are followed so its products can still be discovered.
+    robots: hasProducts
+      ? { index: true, follow: true }
+      : { index: false, follow: true },
   };
 }
 
@@ -50,6 +73,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         backgroundAttachment: "fixed",
       }}
     >
+      {/* Breadcrumb metadata for the visible trail below; renders no UI. */}
+      <BreadcrumbJsonLd
+        items={[
+          { name: "خانه", href: "/" },
+          { name: "فروشگاه", href: "/products" },
+          { name: category.name },
+        ]}
+      />
       {/* پس‌زمینه برای موبایل */}
       <style>{`
         @media (max-width: 1023px) {

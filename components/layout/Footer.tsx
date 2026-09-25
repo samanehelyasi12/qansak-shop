@@ -3,21 +3,20 @@ import Container from "@/components/ui/Container";
 
 const quickLinks = [
   { label: "خانه", href: "/" },
-  { label: "فروشگاه", href: "/shop" },
+  { label: "فروشگاه", href: "/products" },
   { label: "درباره ما", href: "/about" },
-  { label: "تماس با ما", href: "/contact" },
+  
 ];
 
 const categoryLinks = [
   { label: "کیک", href: "/categories/cake" },
-  { label: "شیرینی", href: "/categories/sable" },
+  { label: "پودر کیک", href: "/categories/cake-mix" },
   { label: "نان", href: "/categories/bread" },
-  { label: "شکلات", href: "/categories/candy" },
+  { label: "قند", href: "/categories/candy" },
 ];
 
 const supportLinks = [
   { label: "سبد خرید", href: "/cart" },
-  { label: "پیگیری سفارش", href: "/orders" },
   { label: "سوالات متداول", href: "/faq" },
   { label: "قوانین و مقررات", href: "/terms" },
 ];
@@ -101,7 +100,7 @@ export default function Footer() {
                 قندک
               </h3>
               <p className="text-sm leading-7 text-cocoa/75">
-                شیرینی‌سرای قندک با بیش از ده سال تجربه، تولیدکننده انواع کیک،
+                شیرینی‌سرای قندک  تولیدکننده انواع کیک،
                 شیرینی، نان و شکلات دست‌ساز
               </p>
 
@@ -188,15 +187,15 @@ export default function Footer() {
                 ))}
               </ul>
               <ul className="flex flex-col gap-2 border-t-2 border-dashed border-qandek-peach/50 pt-4 text-sm text-cocoa/75">
-                <li>تلفن: ۰۲۱-۱۲۳۴۵۶۷۸</li>
-                <li>آدرس: تهران، خیابان ولیعصر</li>
+                <li>تلفن:</li>
+                <li>آدرس: </li>
               </ul>
             </div>
           </div>
 
             {/* کپی‌رایت */}
           <div className="absolute inset-x-0 bottom-6 z-10 text-center text-sm text-cocoa/60 sm:bottom-8 lg:bottom-10">
-            <p>&copy; {new Date().getFullYear()} قندک. تمامی حقوق محفوظ است.</p>
+            <p>&copy;  تمامی حقوق این سایت برای قندک محفوظ است {new Date().getFullYear()}</p>
           </div>
         </div>
       </Container>

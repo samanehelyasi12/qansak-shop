@@ -1,12 +1,13 @@
 import type { Product } from "@/types/product";
 import { getCategoryBySlug } from "@/data/categories";
+import { getEffectiveProductPrice } from "@/lib/pricing";
 
 interface ProductInfoProps {
   product: Product;
 }
 
 export default function ProductInfo({ product }: ProductInfoProps) {
-  const displayPrice = product.discountPrice || product.price;
+  const displayPrice = getEffectiveProductPrice(product);
   const category = getCategoryBySlug(product.categorySlug);
 
   return (

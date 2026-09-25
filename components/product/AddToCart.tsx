@@ -3,6 +3,7 @@
 import type { Product } from "@/types/product";
 import { useState } from "react";
 import Button from "@/components/ui/Button";
+import { getLineTotal, getUnitPrice } from "@/lib/pricing";
 
 interface AddToCartProps {
   product: Product;
@@ -18,16 +19,15 @@ export default function AddToCart({
   disabled = false,
 }: AddToCartProps) {
   const [quantity, setQuantity] = useState(1);
-  const [isAdding, setIsAdding] = useState(false);
 
-  const handleAddToCart = async () => {
-    setIsAdding(true);
+  // عملیات افزودن به سبد کاملاً محلی و همگام است، پس state بارگذاری
+  // معناداری وجود ندارد و از بین بردن آن رفتار ظاهری را تغییر نمی‌دهد.
+  const handleAddToCart = () => {
     onAddToCart(product, selectedOptions, quantity);
-    setIsAdding(false);
   };
 
-  const displayPrice = product.discountPrice || product.price;
-  const totalPrice = displayPrice * quantity;
+  const displayPrice = getUnitPrice(product, selectedOptions);
+  const totalPrice = getLineTotal(product, selectedOptions, quantity);
 
   return (
     <div className="space-y-4 border-t border-cream pt-6">
@@ -74,9 +74,9 @@ export default function AddToCart({
           size="lg"
           className="w-full sm:w-auto"
           onClick={handleAddToCart}
-          disabled={disabled || !product.inStock || isAdding}
+          disabled={disabled || !product.inStock}
         >
-          {isAdding ? "در حال اضافه کردن..." : product.inStock ? "افزودن به سبد" : "ناموجود"}
+          {product.inStock ? "افزودن به سبد" : "ناموجود"}
         </Button>
       </div>
     </div>

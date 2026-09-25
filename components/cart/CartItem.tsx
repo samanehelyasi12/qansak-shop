@@ -44,16 +44,18 @@ export default function CartItem({
               type="button"
               onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
               className="px-3 py-1 text-cocoa hover:bg-cream"
-              aria-label="کم کردن تعداد"
+              aria-label={`کاهش تعداد ${product.name}`}
             >
               −
             </button>
-            <span className="w-8 text-center text-cocoa">{quantity}</span>
+            <span className="w-8 text-center text-cocoa" aria-live="polite" aria-atomic="true">
+              {quantity}
+            </span>
             <button
               type="button"
               onClick={() => onQuantityChange(quantity + 1)}
               className="px-3 py-1 text-cocoa hover:bg-cream"
-              aria-label="افزایش تعداد"
+              aria-label={`افزایش تعداد ${product.name}`}
             >
               +
             </button>

@@ -8,12 +8,10 @@ import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import CustomerForm from "@/components/checkout/CustomerForm";
 import DeliveryInfo from "@/components/checkout/DeliveryInfo";
 import OrderSummary from "@/components/checkout/OrderSummary";
-
-// TODO: این آیتم‌ها رو از استیت واقعی سبد خرید (context/zustand/localStorage) بخونید
-const cartItems = [
-  { name: "کیک شکلاتی", quantity: 1, price: 385000, slug: "chocolate-cake" },
-  { name: "کوکی شکلاتی", quantity: 2, price: 45000, slug: "chocolate-chip-cookie" },
-];
+import EmptyCart from "@/components/cart/EmptyCart";
+import { useCart } from "@/lib/cart/store";
+import { getCartTotals, toOrderSummaryItems } from "@/lib/cart/totals";
+import { SHIPPING_COST } from "@/lib/checkout/config";
 
 type CustomerData = {
   firstName: string;
@@ -22,11 +20,9 @@ type CustomerData = {
   address: string;
 };
 
-// هزینه ثابت پیک درون‌شهری — عدد واقعی رو جایگزین کنید
-const SHIPPING_COST = 30000;
-
 export default function ShippingPage() {
   const router = useRouter();
+  const { items: cartItems } = useCart();
 
   const [customer, setCustomer] = useState<CustomerData>({
     firstName: "",
@@ -37,9 +33,8 @@ export default function ShippingPage() {
   const [paymentMethod, setPaymentMethod] = useState<"online" | "card" | "cash">("online");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const discount = 0;
-  const total = subtotal + SHIPPING_COST - discount;
+  const summaryItems = toOrderSummaryItems(cartItems);
+  const { subtotal, discount, total } = getCartTotals(cartItems, SHIPPING_COST);
 
   const isCustomerValid =
     customer.firstName.trim() !== "" &&
@@ -51,18 +46,24 @@ export default function ShippingPage() {
     if (!isCustomerValid) return;
     setIsSubmitting(true);
     try {
-      // TODO: اینجا اطلاعات مشتری/تحویل رو یا موقتاً در sessionStorage نگه دارید،
-      // یا با یک درخواست به جنگو (مثلاً POST /api/orders/draft/) سفارش پیش‌نویس بسازید
-      // تا در مرحله پرداخت amount/orderId واقعی داشته باشید.
+      // فقط اطلاعات مشتری/تحویل موقتاً نگه داشته می‌شود.
+      // مبلغ سفارش عمداً ذخیره نمی‌شود؛ منبع حقیقت، سبد و lib/cart/totals است.
+      // TODO: بعد از اتصال جنگو، به‌جای sessionStorage یک سفارش پیش‌نویس
+      // (مثلاً POST /api/orders/draft/) ساخته شود تا amount/orderId واقعی داشته باشیم.
       sessionStorage.setItem(
         "qandak_checkout_customer",
-        JSON.stringify({ customer, paymentMethod, total })
+        JSON.stringify({ customer, paymentMethod })
       );
       router.push("/checkout/payment");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // سبد خالی: هیچ سفارش نمایشی ساخته نمی‌شود
+  if (cartItems.length === 0) {
+    return <EmptyCart />;
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#fff9f7]">
@@ -121,7 +122,7 @@ export default function ShippingPage() {
               {/* خلاصه سفارش، با دکمه بازگشت کنار دکمه ادامه */}
               <aside className="xl:sticky xl:top-6">
                 <OrderSummary
-                  items={cartItems}
+                  items={summaryItems}
                   subtotal={subtotal}
                   shipping={SHIPPING_COST}
                   discount={discount}

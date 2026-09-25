@@ -6,56 +6,31 @@ import Link from "next/link";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
-
-interface CartItem {
-  id: string;
-  slug: string;
-  name: string;
-  image: string;
-  price: number;
-  quantity: number;
-}
-
-const initialItems: CartItem[] = [
-  {
-    id: "1",
-    slug: "chocolate-truffle-cake",
-    name: "کیک ترافل شکلاتی",
-    image: "/images/categories/cake.webp",
-    price: 760000,
-    quantity: 1,
-  },
-  {
-    id: "2",
-    slug: "chickpea-cookie",
-    name: "نان نخودچی",
-    image: "/images/categories/cookie.webp",
-    price: 320000,
-    quantity: 2,
-  },
-];
-
-const SHIPPING_COST: number = 0;
+import { useCart } from "@/lib/cart/store";
+import { getCartTotals } from "@/lib/cart/totals";
+import { SHIPPING_COST } from "@/lib/checkout/config";
+import EmptyCart from "@/components/cart/EmptyCart";
 
 export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>(initialItems);
+  const { items: cartItems, updateQuantity, removeItem } = useCart();
   const [discountCode, setDiscountCode] = useState("");
 
-  const updateQuantity = (id: string, delta: number) => {
-    setItems((prev) =>
-      prev
-        .map((item) =>
-          item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-        )
-    );
+  // فقط نگاشت دادهٔ استور به ساختار مورد نیاز رندر؛ بدون تغییر در UI
+  const items = cartItems.map((item) => ({
+    id: item.id,
+    slug: item.product.slug,
+    name: item.product.name,
+    image: item.product.images[0],
+    unitPrice: item.unitPrice,
+    quantity: item.quantity,
+  }));
+
+  const handleQuantityChange = (id: string, quantity: number) => {
+    updateQuantity(id, Math.max(1, quantity));
   };
 
-  const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal + SHIPPING_COST;
+  // همان تابع مجموع‌گیری که مراحل ارسال و پرداخت استفاده می‌کنند
+  const { subtotal, total } = getCartTotals(cartItems, SHIPPING_COST);
 
   if (items.length === 0) {
     return <EmptyCart />;
@@ -152,7 +127,7 @@ export default function CartPage() {
                                 </h3>
                               </Link>
                               <p className="mt-1 text-sm text-cocoa/55">
-                                {item.price.toLocaleString("fa-IR")} تومان
+                                {item.unitPrice.toLocaleString("fa-IR")} تومان
                               </p>
                             </div>
 
@@ -183,19 +158,23 @@ export default function CartPage() {
                             <div className="inline-flex items-center rounded-full border border-cream bg-[#fffaf8] p-1">
                               <button
                                 type="button"
-                                onClick={() => updateQuantity(item.id, 1)}
-                                aria-label="افزایش تعداد"
+                                onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                                aria-label={`افزایش تعداد ${item.name}`}
                                 className="flex h-8 w-8 items-center justify-center rounded-full text-lg text-cocoa transition-colors hover:bg-cream"
                               >
                                 +
                               </button>
-                              <span className="w-8 text-center text-sm font-bold text-cocoa">
+                              <span
+                                className="w-8 text-center text-sm font-bold text-cocoa"
+                                aria-live="polite"
+                                aria-atomic="true"
+                              >
                                 {item.quantity}
                               </span>
                               <button
                                 type="button"
-                                onClick={() => updateQuantity(item.id, -1)}
-                                aria-label="کاهش تعداد"
+                                onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                                aria-label={`کاهش تعداد ${item.name}`}
                                 className="flex h-8 w-8 items-center justify-center rounded-full text-lg text-cocoa transition-colors hover:bg-cream"
                               >
                                 −
@@ -209,7 +188,7 @@ export default function CartPage() {
                         <div className="border-t border-cream pt-3 text-right sm:border-t-0 sm:pt-0 sm:text-left">
                           <p className="text-xs text-cocoa/45">مجموع</p>
                           <p className="mt-1 font-bold text-cocoa">
-                            {(item.price * item.quantity).toLocaleString("fa-IR")} تومان
+                            {(item.unitPrice * item.quantity).toLocaleString("fa-IR")} تومان
                           </p>
                         </div>
                       </div>
@@ -293,34 +272,4 @@ export default function CartPage() {
       </div>
     </div>
   )
-}
-
-function EmptyCart() {
-  return (
-    <div className="py-16">
-      <Container>
-        <div className="mx-auto max-w-md rounded-xl border border-cream bg-white px-6 py-16 text-center shadow-sm">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-cream">
-            <svg className="h-8 w-8 text-caramel" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-            </svg>
-          </div>
-          <h1 className="mb-3 text-2xl font-bold text-cocoa">سبد خرید شما خالی است</h1>
-          <p className="mb-8 text-cocoa/70">
-            هنوز محصولی به سبد اضافه نکرده‌اید. از شیرینی‌های تازه قندک شروع کنید.
-          </p>
-          <Link href="/categories/cake">
-            <Button size="lg" className="w-full cursor-pointer">
-              شروع خرید
-            </Button>
-          </Link>
-          <Link href="/" className="mt-4 block">
-            <Button variant="secondary" size="lg" className="w-full cursor-pointer">
-              بازگشت به صفحه اصلی
-            </Button>
-          </Link>
-        </div>
-      </Container>
-    </div>
-  );
 }

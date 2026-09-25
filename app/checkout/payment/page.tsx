@@ -6,16 +6,14 @@ import Image from "next/image";
 import Container from "@/components/ui/Container";
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import OrderSummary from "@/components/checkout/OrderSummary";
-
-// TODO: این آیتم‌ها و مبلغ باید از همون داده‌ای بیان که در مرحله قبل (shipping) ذخیره شد
-const cartItems = [
-  { name: "کیک شکلاتی", quantity: 1, price: 385000, slug: "chocolate-cake" },
-  { name: "کوکی شکلاتی", quantity: 2, price: 45000, slug: "chocolate-chip-cookie" },
-];
-const SHIPPING_COST = 30000;
+import EmptyCart from "@/components/cart/EmptyCart";
+import { useCart } from "@/lib/cart/store";
+import { getCartTotals, toOrderSummaryItems } from "@/lib/cart/totals";
+import { SHIPPING_COST } from "@/lib/checkout/config";
 
 export default function PaymentPage() {
   const router = useRouter();
+  const { items: cartItems } = useCart();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [customerName, setCustomerName] = useState<string>("");
 
@@ -31,8 +29,14 @@ export default function PaymentPage() {
     }
   }, []);
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal + SHIPPING_COST;
+  // همان سبد و همان تابع مجموع‌گیری مرحلهٔ ارسال
+  const summaryItems = toOrderSummaryItems(cartItems);
+  const { subtotal, discount, total } = getCartTotals(cartItems, SHIPPING_COST);
+
+  // سبد خالی: هیچ سفارش نمایشی ساخته نمی‌شود
+  if (cartItems.length === 0) {
+    return <EmptyCart />;
+  }
 
   const handlePayWithZarinpal = async () => {
     setIsRedirecting(true);
@@ -152,10 +156,10 @@ export default function PaymentPage() {
               {/* خلاصه سفارش، با دکمه بازگشت به مرحله اطلاعات ارسال */}
               <aside className="xl:sticky xl:top-6">
                 <OrderSummary
-                  items={cartItems}
+                  items={summaryItems}
                   subtotal={subtotal}
                   shipping={SHIPPING_COST}
-                  discount={0}
+                  discount={discount}
                   total={total}
                   onSubmit={handlePayWithZarinpal}
                   isSubmitting={isRedirecting}

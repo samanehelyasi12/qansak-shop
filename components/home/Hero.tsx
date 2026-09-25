@@ -30,7 +30,7 @@ export default function Hero() {
           </h1>
           <img
             src="/images/products/khat.webp"
-            alt="khat"
+            alt=""
             width={60}
             height={60}
             className="mt-[-120px] absolute mr-[130px] animate-fade-up [animation-delay:0.35s]"
@@ -39,7 +39,7 @@ export default function Hero() {
           <div className="mt-4 flex items-center gap-3 animate-fade-up [animation-delay:0.3s]">
             <Image
               src="/images/products/heart.webp"
-              alt="heart"
+              alt=""
               width={180}
               height={180}
               className="mr-40"
@@ -181,7 +181,7 @@ export default function Hero() {
         {/* خط موج‌دار قلبی، زیر تیتر */}
         <Image
           src="/images/products/heart.webp"
-          alt="heart"
+          alt=""
           width={140}
           height={40}
           className="h-12 w-auto animate-fade-up [animation-delay:0.3s]"

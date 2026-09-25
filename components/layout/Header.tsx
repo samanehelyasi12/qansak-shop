@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { getAllCategories } from "@/data/categories";
 import { searchProducts } from "@/data/search";
+import { getEffectiveProductPrice } from "@/lib/pricing";
 import Container from "@/components/ui/Container";
 
 const categories = getAllCategories();
@@ -18,7 +19,7 @@ const navItems = [
   { label: "فروشگاه", href: "/products" },
   { label: "دسته‌بندی‌ها", href: "#", hasDropdown: true },
   { label: "درباره ما", href: "/about" },
-  { label: "تماس با ما", href: "/contact" },
+  
 ];
 
 function isActive(href: string, pathname: string): boolean {
@@ -27,6 +28,16 @@ function isActive(href: string, pathname: string): boolean {
   }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
+
+/** المان‌هایی که فوکوس می‌تواند روی آن‌ها قرار بگیرد (برای حبس فوکوس در کشو). */
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled]):not([type='hidden'])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "[tabindex]:not([tabindex='-1'])",
+].join(",");
 
 export default function Header() {
   const pathname = usePathname();
@@ -40,6 +51,8 @@ export default function Header() {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   const suggestions = useMemo(() => {
     const trimmed = searchQuery.trim();
@@ -114,6 +127,58 @@ export default function Header() {
     setIsMobileCategoriesOpen(false);
   }, [pathname]);
 
+  /**
+   * کشوی موبایل یک ناحیهٔ مودال است: فوکوس باید داخل آن بماند،
+   * هنگام باز شدن به داخل برود و بعد از بسته شدن به دکمهٔ بازکننده برگردد.
+   * هیچ تغییری در ظاهر/انیمیشن کشو ایجاد نمی‌شود.
+   */
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const root = mobileMenuRef.current;
+    root?.focus();
+
+    const getFocusable = () => {
+      if (!root) return [] as HTMLElement[];
+      return Array.from(
+        root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+      ).filter((element) => element.offsetParent !== null);
+    };
+
+    const handleTrap = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const focusable = getFocusable();
+      if (focusable.length === 0) {
+        event.preventDefault();
+        root?.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey) {
+        if (active === first || active === root) {
+          event.preventDefault();
+          last.focus();
+        }
+        return;
+      }
+      if (active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleTrap);
+
+    return () => {
+      document.removeEventListener("keydown", handleTrap);
+      previouslyFocused?.focus?.();
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <header className="sticky top-0 z-50">
       <div className="rounded-2xl border border-qandek-pink/40 bg-qandek-milk/80 shadow-sm backdrop-blur ">
@@ -139,7 +204,6 @@ export default function Header() {
 
               <nav
                 className="hidden flex-1 items-center justify-center gap-0.5 md:flex lg:gap-1"
-                role="navigation"
                 aria-label="منوی اصلی"
               >
                 {navItems.map((item) => {
@@ -198,14 +262,12 @@ export default function Header() {
                               <div className="pt-2">
                                 <ul
                                   id="categories-dropdown"
-                                  role="menu"
                                   className="animate-fade-slide overflow-hidden rounded-xl border border-qandek-pink/40 bg-white py-2 shadow-lg"
                                 >
                                   {categories.map((category) => (
-                                    <li key={category.id} role="none">
+                                    <li key={category.id}>
                                       <Link
                                         href={`/categories/${category.slug}`}
-                                        role="menuitem"
                                         onClick={() => setIsCategoriesOpen(false)}
                                         className="block cursor-pointer px-4 py-2.5 text-sm text-cocoa transition-colors duration-150 hover:bg-qandek-pink/30 hover:text-qandek-brown"
                                       >
@@ -269,6 +331,7 @@ export default function Header() {
                             <input
                               type="search"
                               name="q"
+                              aria-label="جستجوی محصولات"
                               value={searchQuery}
                               onChange={(event) => setSearchQuery(event.target.value)}
                               placeholder="جستجو در قندک..."
@@ -313,7 +376,7 @@ export default function Header() {
                                         </span>
                                       </span>
                                       <span className="shrink-0 text-xs font-medium text-qandek-strawberry">
-                                        {(product.discountPrice || product.price).toLocaleString("fa-IR")} ت
+                                        {getEffectiveProductPrice(product).toLocaleString("fa-IR")} ت
                                       </span>
                                     </Link>
                                   </li>
@@ -355,6 +418,7 @@ export default function Header() {
 
                   <button
                     type="button"
+                    ref={mobileMenuButtonRef}
                     aria-label={isMobileMenuOpen ? "بستن منو" : "باز کردن منو"}
                     aria-expanded={isMobileMenuOpen}
                     onClick={() => setIsMobileMenuOpen((previous) => !previous)}
@@ -383,12 +447,15 @@ export default function Header() {
             aria-hidden="true"
           />
           <nav
-            role="navigation"
-            aria-label="منوی موبایل"
+            ref={mobileMenuRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mobile-menu-title"
+            tabIndex={-1}
             className="fixed inset-y-0 right-0 z-50 flex w-80 max-w-[85vw] animate-slide-in flex-col bg-white shadow-xl md:hidden"
           >
             <div className="flex items-center justify-between border-b border-qandek-pink/40 p-4">
-              <span className="text-lg font-bold text-qandek-strawberry">منو</span>
+              <span id="mobile-menu-title" className="text-lg font-bold text-qandek-strawberry">منو</span>
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -435,12 +502,11 @@ export default function Header() {
                       </svg>
                     </button>
                     {isMobileCategoriesOpen && (
-                      <ul className="mt-2 space-y-1 border-r-2 border-qandek-pink/40 pr-2" role="menu">
+                      <ul className="mt-2 space-y-1 border-r-2 border-qandek-pink/40 pr-2">
                         {categories.map((category) => (
-                          <li key={category.id} role="none">
+                          <li key={category.id}>
                             <Link
                               href={`/categories/${category.slug}`}
-                              role="menuitem"
                               onClick={() => setIsMobileMenuOpen(false)}
                               className="block cursor-pointer rounded-lg px-3 py-2 text-sm text-cocoa transition-colors duration-150 hover:bg-qandek-peach/50 hover:text-qandek-brown"
                             >

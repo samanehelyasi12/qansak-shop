@@ -15,25 +15,17 @@ export default function ScrollReveal({
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const hasUserScrolled = useRef(false);
 
   useEffect(() => {
-    // فقط وقتی کاربر واقعاً اسکرول کرد، اجازه‌ی trigger شدن بده
-    const onScroll = () => {
-      if (window.scrollY > 10) {
-        hasUserScrolled.current = true;
-        window.removeEventListener("scroll", onScroll);
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-
     const el = ref.current;
     if (!el) return;
 
+    // فقط IntersectionObserver لازم است. شرط قبلیِ «کاربر باید اسکرول کند»
+    // باعث می‌شد محتوایی که کاربر اسکرول نکرده بود برای همیشه opacity-0 بماند.
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && hasUserScrolled.current) {
+          if (entry.isIntersecting) {
             setIsVisible(true);
             observer.unobserve(entry.target);
           }
@@ -44,10 +36,7 @@ export default function ScrollReveal({
 
     observer.observe(el);
 
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (

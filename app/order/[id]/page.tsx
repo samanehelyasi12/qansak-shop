@@ -4,12 +4,21 @@ import Image from "next/image";
 import Link from "next/link";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
+import type { Order } from "@/types/order";
+import type { DeliveryMethod } from "@/types/order";
 
 interface OrderPageProps {
   params: Promise<{ id: string }>;
 }
 
-const mockOrders: Record<string, any> = {
+/** برچسب روش تحویل — همان نگاشتی که در components/order/OrderDetails.tsx وجود دارد */
+const DELIVERY_METHOD_LABELS: Record<DeliveryMethod, string> = {
+  express: "پیک سریع (۳ ساعت)",
+  standard: "پست پیشتاز (۱-۲ روز)",
+  pickup: "تحویل حضوری از شعبه",
+};
+
+const mockOrders: Record<string, Order> = {
   "ORD-12345": {
     id: "ORD-12345",
     date: "۱۴۰۳/۰۶/۱۵",
@@ -58,8 +67,14 @@ const mockOrders: Record<string, any> = {
 export async function generateMetadata({ params }: OrderPageProps): Promise<Metadata> {
   const { id } = await params;
   return {
-    title: `سفارش ${id} | قندک`,
+    title: `سفارش ${id}`,
     description: `جزئیات سفارش ${id}`,
+    // Per-customer order pages must never enter the index, but must stay
+    // crawlable so this directive is readable.
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 
@@ -155,7 +170,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
           <section className="space-y-4 rounded-xl border border-cream bg-white p-6">
             <h2 className="text-xl font-bold text-caramel">محصولات سفارش</h2>
             <div className="space-y-3">
-              {order.items.map((item: typeof order.items[0], index: number) => (
+              {order.items.map((item, index) => (
                 <div key={index} className="flex gap-4 border-b border-cream pb-3 last:border-0 last:pb-0">
                   <div className="flex-1 min-w-0">
                     <Link href={`/products/${item.slug}`}>
@@ -214,7 +229,9 @@ export default async function OrderPage({ params }: OrderPageProps) {
               <dl className="space-y-3 text-sm">
                 <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
                   <dt className="text-cocoa/70">روش تحویل</dt>
-                  <dd className="text-cocoa">پیک درون‌شهری</dd>
+                  <dd className="text-cocoa">
+                    {DELIVERY_METHOD_LABELS[order.delivery.method]}
+                  </dd>
                   <dt className="text-cocoa/70">روش پرداخت</dt>
                   <dd className="text-cocoa">
                     {order.payment.method === "online" && "پرداخت آنلاین (زرین‌پال)"}
