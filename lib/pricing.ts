@@ -24,10 +24,11 @@ export function getSelectedOptionPriceDelta(
   if (!options || options.length === 0) return 0;
 
   return options.reduce((sum, option) => {
-    const selectedValueId = selectedOptions?.[option.id];
-    if (!selectedValueId) return sum;
+    // Selections are keyed and valued by slug, matching the API.
+    const selectedValueSlug = selectedOptions?.[option.slug];
+    if (!selectedValueSlug) return sum;
 
-    const selectedValue = option.values.find((value) => value.id === selectedValueId);
+    const selectedValue = option.values.find((value) => value.slug === selectedValueSlug);
     return sum + (selectedValue?.priceDelta ?? 0);
   }, 0);
 }

@@ -4,16 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { getAllCategories } from "@/data/categories";
-import { searchProducts } from "@/data/search";
+import { clientCatalog, clientCategories } from "@/lib/api/catalog";
 import { getEffectiveProductPrice } from "@/lib/pricing";
+import type { Product } from "@/types/product";
 import Container from "@/components/ui/Container";
 import { useCart } from "@/lib/cart/store";
-
-const categories = getAllCategories();
-const categoryNameBySlug = new Map(
-  categories.map((category) => [category.slug, category.name]),
-);
+import AccountMenu, { AccountDrawerEntry } from "@/components/layout/AccountMenu";
 
 const navItems = [
   { label: "خانه", href: "/" },
@@ -60,15 +56,53 @@ export default function Header() {
   const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<
+    Awaited<ReturnType<typeof clientCategories.all>>
+  >([]);
+  const [categoryNameBySlug, setCategoryNameBySlug] = useState<Map<string, string>>(
+    new Map(),
+  );
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLElement>(null);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
-  const suggestions = useMemo(() => {
+  // The menu and the search box live in the browser, so their data is fetched
+  // here once. The whole catalogue is no longer bundled into the page.
+  useEffect(() => {
+    let cancelled = false;
+
+    void clientCategories.all().then((loaded) => {
+      if (cancelled) return;
+      setCategories(loaded);
+      setCategoryNameBySlug(new Map(loaded.map((c) => [c.slug, c.name])));
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Type-ahead is debounced so a keystroke does not become a request.
+  useEffect(() => {
     const trimmed = searchQuery.trim();
-    return trimmed ? searchProducts(trimmed).slice(0, 5) : [];
+    if (!trimmed) {
+      setSuggestions([]);
+      return;
+    }
+
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      const results = await clientCatalog.search(trimmed);
+      if (!cancelled) setSuggestions(results.slice(0, 5));
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [searchQuery]);
 
   const isCategoriesActive = pathname.startsWith("/categories/");
@@ -411,15 +445,7 @@ export default function Header() {
                     )}
                   </div>
 
-                  <Link
-                    href="/login"
-                    aria-label="ورود و حساب کاربری"
-                    className="hidden cursor-pointer rounded-lg p-2 text-cocoa transition-colors duration-200 hover:bg-qandek-peach/50 hover:text-qandek-brown focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-qandek-peach sm:block"
-                  >
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                    </svg>
-                  </Link>
+                  <AccountMenu />
 
                   <Link
                     href="/cart"
@@ -587,16 +613,7 @@ export default function Header() {
                 </svg>
                 <span>سبد خرید</span>
               </Link>
-              <Link
-                href="/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-cocoa transition-colors duration-150 hover:bg-qandek-peach/50 hover:text-qandek-brown"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
-                <span>ورود به حساب</span>
-              </Link>
+              <AccountDrawerEntry onNavigate={() => setIsMobileMenuOpen(false)} />
             </div>
           </nav>
         </>

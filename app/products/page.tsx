@@ -1,26 +1,16 @@
 import { Metadata } from "next";
-import { getAllCategories } from "@/data/categories";
-import { getProductsByCategory } from "@/data/products";
+import { serverCatalog } from "@/lib/api/catalog";
 import ProductsGrid from "@/components/product/ProductsGrid";
 import Container from "@/components/ui/Container";
-import type { Product } from "@/types/product";
 
 export const metadata: Metadata = {
   title: "فروشگاه",
   description: "تمام محصولات قندک شامل کیک، شیرینی، نان و شکلات دست‌ساز",
 };
 
-export default function ProductsPage() {
-  const categories = getAllCategories();
-
-  const productMap = new Map<string, Product>();
-  categories.forEach((category) => {
-    getProductsByCategory(category.slug).forEach((product) => {
-      productMap.set(product.id, product);
-    });
-  });
-
-  const products = Array.from(productMap.values());
+export default async function ProductsPage() {
+  // One call for the whole page. Prices and stock come from the server.
+  const products = await serverCatalog.products();
 
   return (
     <section

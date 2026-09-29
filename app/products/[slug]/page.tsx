@@ -1,8 +1,9 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProductBySlug, getProductSlugs } from "@/data/products";
-import { getCategoryBySlug } from "@/data/categories";
+import { serverCatalog } from "@/lib/api/catalog";
+import type { Category } from "@/types/category";
+import type { Product } from "@/types/product";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductInfo from "@/components/product/ProductInfo";
 import PreparationTime from "@/components/product/PreparationTime";
@@ -11,27 +12,23 @@ import ProductTabs from "@/components/product/ProductTabs";
 import Container from "@/components/ui/Container";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 import JsonLd from "@/components/seo/JsonLd";
-import { absoluteUrl, buildProductMetaDescription, siteName } from "@/lib/site";
+import { absoluteUrl, buildProductMetaDescription, siteName, toAbsoluteUrl } from "@/lib/site";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  const slugs = getProductSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
-
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await serverCatalog.productBySlug(slug);
 
   if (!product) {
     return { title: "محصول یافت نشد" };
   }
 
   const canonical = absoluteUrl(`/products/${product.slug}`);
-  const description = buildProductMetaDescription(product);
+  const category = await serverCatalog.categoryBySlug(product.categorySlug);
+  const description = buildProductMetaDescription(product, category);
 
   return {
     title: product.name,
@@ -47,7 +44,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       // Absolute URLs are required by the OG spec; metadataBase cannot be
       // relied on for arrays of plain strings.
       images: product.images.map((image) => ({
-        url: absoluteUrl(image),
+        url: toAbsoluteUrl(image),
         alt: product.name,
       })),
     },
@@ -58,23 +55,12 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
  * Schema.org JSON-LD for the product.
  *
  * Only fields backed by real, currently-trusted data are emitted.
- * `aggregateRating` and `review` are intentionally OMITTED: the product data is
- * static/mock, so publishing rating structured data would be fabricated
- * rich-result markup. Add it in a later batch once real user reviews exist.
+ * `aggregateRating` and `review` are intentionally OMITTED: the storefront
+ * renders its own review copy, and publishing rating structured data that the
+ * catalog does not carry would be fabricated rich-result markup.
  */
-function buildProductJsonLd(product: {
-  id: string;
-  slug: string;
-  name: string;
-  description: string;
-  price: number;
-  discountPrice?: number;
-  images: string[];
-  categorySlug: string;
-  inStock: boolean;
-}) {
+function buildProductJsonLd(product: Product, category: Category | null) {
   const effectivePrice = product.discountPrice ?? product.price;
-  const category = getCategoryBySlug(product.categorySlug);
 
   return {
     "@context": "https://schema.org",
@@ -82,7 +68,7 @@ function buildProductJsonLd(product: {
     name: product.name,
     description: product.description,
     // Absolute image URLs are required by the spec.
-    image: product.images.map((image) => absoluteUrl(image)),
+    image: product.images.map((image) => toAbsoluteUrl(image)),
     sku: product.id,
     ...(category
       ? {
@@ -116,17 +102,17 @@ function buildProductJsonLd(product: {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await serverCatalog.productBySlug(slug);
 
   if (!product) {
     notFound();
   }
 
-  const category = getCategoryBySlug(product.categorySlug);
+  const category = await serverCatalog.categoryBySlug(product.categorySlug);
 
   return (
     <div className="py-8 sm:py-12">
-      <JsonLd data={buildProductJsonLd(product)} />
+      <JsonLd data={buildProductJsonLd(product, category)} />
       {/* Describes the breadcrumb that is already visible below; renders no UI. */}
       <BreadcrumbJsonLd
         items={[
@@ -171,7 +157,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-10 xl:gap-14">
           {/* ستون راست: اطلاعات محصول، گزینه‌ها، افزودن به سبد، تب‌ها */}
           <div className="order-2 space-y-6 lg:order-1">
-            <ProductInfo product={product} />
+            <ProductInfo product={product} category={category} />
             <ProductClientWrapper product={product} />
             <ProductTabs product={product} />
           </div>

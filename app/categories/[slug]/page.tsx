@@ -3,8 +3,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getCategoryBySlug, getAllCategories } from "@/data/categories";
-import { getProductsByCategory } from "@/data/products";
+import { serverCatalog } from "@/lib/api/catalog";
 import ProductCard from "@/components/product/ProductCard";
 import Container from "@/components/ui/Container";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
@@ -14,20 +13,15 @@ interface CategoryPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  const categories = getAllCategories();
-  return categories.map((cat) => ({ slug: cat.slug }));
-}
-
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = await serverCatalog.categoryBySlug(slug);
 
   if (!category) {
     return { title: "دسته‌بندی یافت نشد" };
   }
 
-  const products = getProductsByCategory(slug);
+  const products = await serverCatalog.productsInCategory(slug);
   const hasProducts = products.length > 0;
 
   // Each description combines the category's own copy with its real, current
@@ -56,14 +50,17 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = await serverCatalog.categoryBySlug(slug);
 
   if (!category) {
     notFound();
   }
 
-  const products = getProductsByCategory(slug);
-  const allCategories = getAllCategories();
+  // Both lists are independent, so they are fetched together.
+  const [products, allCategories] = await Promise.all([
+    serverCatalog.productsInCategory(slug),
+    serverCatalog.categories(),
+  ]);
 
   return (
     <section

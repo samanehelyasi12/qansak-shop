@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Hero from "@/components/home/Hero";
 import Categories from "@/components/home/Categories";
+import { serverCatalog } from "@/lib/api/catalog";
 import BestSellers from "@/components/home/BestSellers";
 import MembershipBanner from "@/components/home/MembershipBanner";
 import NewProducts from "@/components/home/NewProducts";
@@ -22,11 +23,13 @@ export const metadata: Metadata = {
     "قندک، شیرینی‌سرای دست‌ساز با کیک، چیزکیک، تیرامیسو، کوکی، نان، سابله کیک و شکلات. انتخاب محصول و سفارش آنلاین از فروشگاه قندک.",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const categories = await serverCatalog.categories();
+
   return (
     <>
       <Hero />
-      <Categories />
+      <Categories categories={categories} />
       <BestSellers />
       <MembershipBanner />
       <NewProducts />

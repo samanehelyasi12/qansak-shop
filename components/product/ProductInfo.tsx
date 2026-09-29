@@ -1,14 +1,15 @@
+import type { Category } from "@/types/category";
 import type { Product } from "@/types/product";
-import { getCategoryBySlug } from "@/data/categories";
 import { getEffectiveProductPrice } from "@/lib/pricing";
 
 interface ProductInfoProps {
   product: Product;
+  /** Resolved on the server by the product page. */
+  category?: Category | null;
 }
 
-export default function ProductInfo({ product }: ProductInfoProps) {
+export default function ProductInfo({ product, category }: ProductInfoProps) {
   const displayPrice = getEffectiveProductPrice(product);
-  const category = getCategoryBySlug(product.categorySlug);
 
   return (
     <div className="space-y-4 sm:space-y-6">

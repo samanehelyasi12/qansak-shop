@@ -3,29 +3,33 @@
 import { useState } from "react";
 import Input from "@/components/ui/Input";
 
-interface CustomerFormProps {
-  initialData?: {
-    firstName: string;
-    lastName: string;
-    phone: string;
-    address: string;
-  };
-  onChange: (data: {
-    firstName: string;
-    lastName: string;
-    phone: string;
-    address: string;
-  }) => void;
+export interface CustomerFormData {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  address: string;
+  /** Asked of guests only; a signed-in customer already has one. */
+  email?: string;
 }
 
+interface CustomerFormProps {
+  initialData?: CustomerFormData;
+  onChange: (data: CustomerFormData) => void;
+  showEmail?: boolean;
+}
+
+const EMPTY: CustomerFormData = {
+  firstName: "",
+  lastName: "",
+  phone: "",
+  address: "",
+  email: "",
+};
+
 export default function CustomerForm({
-  initialData = {
-    firstName: "",
-    lastName: "",
-    phone: "",
-    address: "",
-  },
+  initialData = EMPTY,
   onChange,
+  showEmail = false,
 }: CustomerFormProps) {
   const [formData, setFormData] = useState(initialData);
 
@@ -68,6 +72,18 @@ export default function CustomerForm({
         onChange={(e) => handleChange("phone", e.target.value)}
         required
       />
+      {showEmail && (
+        <Input
+          name="email"
+          type="email"
+          label="ایمیل"
+          placeholder="برای پیگیری سفارش"
+          autoComplete="email"
+          value={formData.email ?? ""}
+          onChange={(e) => handleChange("email", e.target.value)}
+          required
+        />
+      )}
       <div className="w-full">
         <label htmlFor="address" className="block mb-2 text-sm font-medium text-cocoa">
           آدرس کامل <span className="text-berry">*</span>

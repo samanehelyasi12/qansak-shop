@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getAllCategories } from "@/data/categories";
-import { getAllProducts, getProductsByCategory } from "@/data/products";
+import { serverCatalog } from "@/lib/api/catalog";
 import { absoluteUrl } from "@/lib/site";
 
 /**
@@ -13,11 +12,16 @@ import { absoluteUrl } from "@/lib/site";
  * message and are marked `noindex` in their own metadata, so listing them here
  * would advertise non-indexable, thin pages.
  *
- * Uses the same data helpers as the pages' `generateStaticParams`, so no
- * product or category is invented here.
+ * The catalogue comes from the API, so nothing here is invented and nothing
+ * goes stale.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+
+  const [products, categories] = await Promise.all([
+    serverCatalog.products(),
+    serverCatalog.categories(),
+  ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -52,8 +56,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const categoryRoutes: MetadataRoute.Sitemap = getAllCategories()
-    .filter((category) => getProductsByCategory(category.slug).length > 0)
+  const productSlugsByCategory = new Map<string, Set<string>>();
+  products.forEach((product) => {
+    const set = productSlugsByCategory.get(product.categorySlug) ?? new Set<string>();
+    set.add(product.slug);
+    productSlugsByCategory.set(product.categorySlug, set);
+  });
+
+  const categoryRoutes: MetadataRoute.Sitemap = categories
+    .filter((category) => productSlugsByCategory.has(category.slug))
     .map((category) => ({
       url: absoluteUrl(`/categories/${category.slug}`),
       lastModified: now,
@@ -61,7 +72,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     }));
 
-  const productRoutes: MetadataRoute.Sitemap = getAllProducts().map((product) => ({
+  const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
     url: absoluteUrl(`/products/${product.slug}`),
     lastModified: now,
     changeFrequency: "weekly",

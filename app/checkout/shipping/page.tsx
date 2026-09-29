@@ -1,68 +1,136 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Container from "@/components/ui/Container";
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
-import CustomerForm from "@/components/checkout/CustomerForm";
+import CustomerForm, { type CustomerFormData } from "@/components/checkout/CustomerForm";
 import DeliveryInfo from "@/components/checkout/DeliveryInfo";
 import OrderSummary from "@/components/checkout/OrderSummary";
 import EmptyCart from "@/components/cart/EmptyCart";
 import { useCart } from "@/lib/cart/store";
 import { getCartTotals, toOrderSummaryItems } from "@/lib/cart/totals";
 import { SHIPPING_COST } from "@/lib/checkout/config";
-
-type CustomerData = {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  address: string;
-};
+import { buildOrderItems, DEFAULT_DELIVERY_METHOD } from "@/lib/cart/orderPayload";
+import { ApiError } from "@/lib/api/client";
+import { customerApi } from "@/lib/api/customer";
+import { orderApi, type DeliveryMethod } from "@/lib/api/orders";
+import { useAuth } from "@/lib/api/useAuth";
 
 export default function ShippingPage() {
   const router = useRouter();
   const { items: cartItems } = useCart();
+  const { user, isLoading: isAuthLoading } = useAuth();
 
-  const [customer, setCustomer] = useState<CustomerData>({
+  const [customer, setCustomer] = useState<CustomerFormData>({
     firstName: "",
     lastName: "",
     phone: "",
     address: "",
+    email: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState<"online" | "card" | "cash">("online");
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>(
+    DEFAULT_DELIVERY_METHOD,
+  );
+  const [discountCode, setDiscountCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  // A signed-in customer should not retype what the shop already knows.
+  useEffect(() => {
+    if (!user) return;
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        const [profile, savedAddress] = await Promise.all([
+          customerApi.profile(),
+          customerApi.address(),
+        ]);
+        if (cancelled) return;
+
+        setCustomer((current) => ({
+          firstName: current.firstName || profile.first_name || user.first_name,
+          lastName: current.lastName || profile.last_name || user.last_name,
+          phone: current.phone || profile.phone_number || user.phone_number || "",
+          address: current.address || savedAddress?.address || "",
+          email: current.email || user.email || "",
+        }));
+      } catch {
+        // Prefill is a convenience; an empty form is still usable.
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  // Display-only estimate. The server recomputes every amount when it accepts
+  // the order, and that response is what the payment step shows.
   const summaryItems = toOrderSummaryItems(cartItems);
   const { subtotal, discount, total } = getCartTotals(cartItems, SHIPPING_COST);
 
+  const { items: orderItems, problems } = buildOrderItems(cartItems);
+
   const isCustomerValid =
-    customer.firstName.trim() !== "" &&
-    customer.lastName.trim() !== "" &&
-    customer.phone.trim() !== "" &&
-    customer.address.trim() !== "";
+    customer.address.trim() !== "" &&
+    // A guest has to give contact details; a signed-in customer already has them.
+    (user
+      ? true
+      : customer.firstName.trim() !== "" &&
+        customer.lastName.trim() !== "" &&
+        customer.phone.trim() !== "" &&
+        (customer.email ?? "").trim() !== "");
 
-  const handleContinue = async () => {
-    if (!isCustomerValid) return;
+  async function handleContinue() {
+    if (!isCustomerValid || isSubmitting || problems.length > 0) return;
+
     setIsSubmitting(true);
-    try {
-      // فقط اطلاعات مشتری/تحویل موقتاً نگه داشته می‌شود.
-      // مبلغ سفارش عمداً ذخیره نمی‌شود؛ منبع حقیقت، سبد و lib/cart/totals است.
-      // TODO: بعد از اتصال جنگو، به‌جای sessionStorage یک سفارش پیش‌نویس
-      // (مثلاً POST /api/orders/draft/) ساخته شود تا amount/orderId واقعی داشته باشیم.
-      sessionStorage.setItem(
-        "qandak_checkout_customer",
-        JSON.stringify({ customer, paymentMethod })
-      );
-      router.push("/checkout/payment");
-    } catch {
-      // sessionStorage ممکن است در حالت خصوصی/محدود در دسترس نباشد.
-      // در آن حالت کاربر نباید در حالت «در حال پردازش» گیر کند.
-      setIsSubmitting(false);
-    }
-  };
+    setError(null);
 
-  // سبد خالی: هیچ سفارش نمایشی ساخته نمی‌شود
+    try {
+      const common = {
+        items: orderItems,
+        delivery_method: deliveryMethod,
+        ...(discountCode.trim() ? { discount_code: discountCode.trim() } : {}),
+      };
+
+      let orderCode: string;
+
+      if (user) {
+        // Save the typed address first: the order copies it, and a customer
+        // with no stored address would otherwise be refused.
+        await customerApi.saveAddress(customer.address.trim());
+        const order = await orderApi.place(common);
+        orderCode = order.order_code;
+      } else {
+        const order = await orderApi.placeGuest({
+          ...common,
+          first_name: customer.firstName.trim(),
+          last_name: customer.lastName.trim(),
+          email: (customer.email ?? "").trim(),
+          phone_number: customer.phone.trim(),
+          address: customer.address.trim(),
+        });
+        orderCode = order.order_code;
+      }
+
+      // Only the order code travels in the URL. No personal data is stored in
+      // the browser between the steps.
+      router.push(`/checkout/payment?order=${encodeURIComponent(orderCode)}`);
+    } catch (caught) {
+      setIsSubmitting(false);
+      if (caught instanceof ApiError) {
+        setError(caught.message);
+      } else {
+        setError("ثبت سفارش انجام نشد. لطفاً دوباره تلاش کنید.");
+      }
+    }
+  }
+
+  // سبد خالی
   if (cartItems.length === 0) {
     return <EmptyCart />;
   }
@@ -117,8 +185,60 @@ export default function ShippingPage() {
             <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
               {/* فرم‌ها */}
               <section className="min-w-0 space-y-5">
-                <CustomerForm initialData={customer} onChange={setCustomer} />
-                <DeliveryInfo selectedPayment={paymentMethod} onPaymentChange={setPaymentMethod} />
+                <CustomerForm
+                  initialData={customer}
+                  onChange={setCustomer}
+                  showEmail={!user && !isAuthLoading}
+                />
+
+                <DeliveryInfo
+                  deliveryMethod={deliveryMethod}
+                  onDeliveryChange={setDeliveryMethod}
+                />
+
+                {/*
+                  The code is only an identifier. Whether it is valid, which
+                  discount it is, and how much comes off are all decided by the
+                  server when the order is placed.
+                */}
+                <div className="rounded-3xl border border-white/80 bg-white/90 p-5 shadow-[0_16px_50px_rgba(80,40,30,0.08)] backdrop-blur-md sm:p-6">
+                  <label
+                    htmlFor="discount-code"
+                    className="mb-2 block text-sm font-medium text-cocoa"
+                  >
+                    کد تخفیف
+                  </label>
+                  <input
+                    id="discount-code"
+                    type="text"
+                    value={discountCode}
+                    onChange={(e) => setDiscountCode(e.target.value)}
+                    placeholder="اختیاری"
+                    className="w-full rounded-lg border border-cream bg-white px-4 py-2 text-cocoa placeholder:text-cocoa/35 focus:border-caramel focus:outline-none focus:ring-2 focus:ring-caramel"
+                  />
+                </div>
+
+                {problems.length > 0 && (
+                  <ul
+                    role="alert"
+                    className="space-y-1 rounded-2xl border border-berry/30 bg-berry/5 px-4 py-3 text-sm text-berry"
+                  >
+                    {problems.map((problem) => (
+                      <li key={problem.productId}>
+                        {problem.productName}: {problem.message}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {error && (
+                  <p
+                    role="alert"
+                    className="rounded-2xl border border-berry/30 bg-berry/5 px-4 py-3 text-sm text-berry"
+                  >
+                    {error}
+                  </p>
+                )}
               </section>
 
               {/* خلاصه سفارش، با دکمه بازگشت کنار دکمه ادامه */}
@@ -126,13 +246,13 @@ export default function ShippingPage() {
                 <OrderSummary
                   items={summaryItems}
                   subtotal={subtotal}
-                  shipping={SHIPPING_COST}
+                  shipping={deliveryMethod === "pickup" ? 0 : SHIPPING_COST}
                   discount={discount}
                   total={total}
                   onSubmit={handleContinue}
-                  disabled={!isCustomerValid}
+                  disabled={!isCustomerValid || problems.length > 0}
                   isSubmitting={isSubmitting}
-                  submitLabel="ادامه به پرداخت ←"
+                  submitLabel="ثبت سفارش و پرداخت ←"
                   backHref="/cart"
                   backLabel="بازگشت"
                 />

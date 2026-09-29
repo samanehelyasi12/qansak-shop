@@ -1,7 +1,8 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import Image from "next/image";
 import Container from "@/components/ui/Container";
-import RegisterForm from "@/components/auth/RegisterForm";
+import AuthForm from "@/components/auth/AuthForm";
 
 export const metadata: Metadata = {
   title: "ثبت‌نام",
@@ -82,7 +83,13 @@ export default function RegisterPage() {
                   </header>
 
                   {/* فرم + مودال */}
-                  <RegisterForm />
+                  <Suspense
+                    fallback={
+                      <div className="h-64 animate-pulse rounded-2xl bg-cocoa/5" />
+                    }
+                  >
+                    <AuthForm mode="register" />
+                  </Suspense>
                 </div>
               </div>
             </div>

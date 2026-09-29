@@ -1,5 +1,4 @@
 import type { Product } from "@/types/product";
-import { getCategoryBySlug } from "@/data/categories";
 import { getEffectiveProductPrice } from "@/lib/pricing";
 
 /**
@@ -22,6 +21,20 @@ export const siteUrl = (
 ).replace(/\/+$/, "");
 
 export const siteName = "قندک";
+
+/**
+ * Makes a URL absolute for metadata and JSON-LD.
+ *
+ * Catalog images now come from the API and are already absolute, so anything
+ * that starts with http is passed through untouched. Only site-relative paths
+ * get the site origin prefixed.
+ */
+export function toAbsoluteUrl(pathOrUrl: string): string {
+  if (/^https?:\/\//i.test(pathOrUrl)) {
+    return pathOrUrl;
+  }
+  return absoluteUrl(pathOrUrl);
+}
 
 /** Verified social profiles, taken from the existing Footer links. */
 export const socialProfiles = [
@@ -63,9 +76,11 @@ function formatPrice(value: number): string {
  * the product's own description plus its real, currently-displayed price and
  * availability. Nothing is invented here.
  */
-export function buildProductMetaDescription(product: Product): string {
+export function buildProductMetaDescription(
+  product: Product,
+  category?: { name: string } | null,
+): string {
   const price = formatPrice(getEffectiveProductPrice(product));
-  const category = getCategoryBySlug(product.categorySlug);
   const categoryLabel = category?.name ? ` در دستهٔ ${category.name}` : "";
 
   return `${product.description}${categoryLabel} — ${price} تومان، ${

@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Container from "@/components/ui/Container";
 import ProductCard from "@/components/product/ProductCard";
-import { searchProducts } from "@/data/search";
-import { getAllCategories } from "@/data/categories";
+import { serverCatalog } from "@/lib/api/catalog";
 
 interface SearchPageProps {
   searchParams: Promise<{ q?: string }>;
@@ -22,8 +21,11 @@ export const metadata: Metadata = {
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q = "" } = await searchParams;
   const query = q.trim();
-  const results = searchProducts(query);
-  const allCategories = getAllCategories();
+  // The catalogue does the matching; the browser no longer holds the data.
+  const [results, allCategories] = await Promise.all([
+    serverCatalog.search(query),
+    query ? serverCatalog.categories() : Promise.resolve([]),
+  ]);
 
   return (
     <div className="py-12">

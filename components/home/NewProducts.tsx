@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Container from "@/components/ui/Container";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { getNewProducts } from "@/data/products";
+import { serverCatalog } from "@/lib/api/catalog";
 import ProductCardStack from "@/components/product/ProductCardStack";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import CurvedBottomBackground from "./CurvedBottomBackground";
@@ -66,8 +66,9 @@ const rightDecor = [
   },
 ];
 
-export default function NewProducts() {
-  const products = getNewProducts();
+export default async function NewProducts() {
+  // The API already filters, so the browser never sees the whole catalogue.
+  const products = await serverCatalog.newProducts();
 
   if (products.length === 0) return null;
 

@@ -42,9 +42,40 @@ const securityHeaders = [
   },
 ];
 
+/**
+ * The API origin, derived from the same public variable the client uses.
+ *
+ * Catalogue images are served by Django as absolute URLs, so `next/image`
+ * needs permission to fetch from that host. Parsing it here keeps a single
+ * source of truth: changing NEXT_PUBLIC_API_BASE_URL updates the client, the
+ * server fetch and the image allowlist together.
+ */
+const apiBaseUrl =
+  process.env.NEXT_PUBLIC_API_BASE_URL?.trim().replace(/\/+$/, "") ??
+  "http://localhost:8000";
+
+let apiRemotePattern: { protocol: "http" | "https"; hostname: string; port: string };
+try {
+  const parsed = new URL(apiBaseUrl);
+  apiRemotePattern = {
+    protocol: parsed.protocol.replace(":", "") as "http" | "https",
+    hostname: parsed.hostname,
+    port: parsed.port || (parsed.protocol === "https:" ? "443" : "80"),
+  };
+} catch {
+  apiRemotePattern = {
+    protocol: "http",
+    hostname: "localhost",
+    port: "8000",
+  };
+}
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  images: {
+    remotePatterns: [apiRemotePattern],
+  },
   async headers() {
     return [
       {

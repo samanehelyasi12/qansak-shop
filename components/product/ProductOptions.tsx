@@ -30,10 +30,10 @@ export default function ProductOptions({
   const handleGroupKeyDown = (
     event: KeyboardEvent<HTMLButtonElement>,
     optionId: string,
-    values: { id: string }[],
+    values: { slug: string }[],
   ) => {
     const currentIndex = values.findIndex(
-      (value) => value.id === selectedOptions[optionId],
+      (value) => value.slug === selectedOptions[optionId],
     );
     // اگر هنوز چیزی انتخاب نشده، از دکمه‌ای که فوکوس دارد شروع می‌کنیم.
     const activeIndex = currentIndex === -1 ? 0 : currentIndex;
@@ -57,7 +57,7 @@ export default function ProductOptions({
     }
 
     event.preventDefault();
-    const nextValueId = values[nextIndex].id;
+    const nextValueId = values[nextIndex].slug;
     onOptionChange(optionId, nextValueId);
     buttonRefs.current[`${optionId}:${nextValueId}`]?.focus();
   };
@@ -65,13 +65,13 @@ export default function ProductOptions({
   return (
     <div className="space-y-4 border-t border-cream pt-6">
       {product.options.map((option) => {
-        const selectedValueId = selectedOptions[option.id];
+        const selectedValueId = selectedOptions[option.slug];
         const selectedIndex = option.values.findIndex(
-          (value) => value.id === selectedValueId,
+          (value) => value.slug === selectedValueId,
         );
         // اگر هیچ گزینه‌ای انتخاب نشده باشد، اولین دکمه در چرخهٔ Tab می‌ماند.
         const tabStopIndex = selectedIndex === -1 ? 0 : selectedIndex;
-        const labelId = `product-option-label-${option.id}`;
+        const labelId = `product-option-label-${option.slug}`;
 
         return (
           <div key={option.id} className="space-y-2">
@@ -86,21 +86,21 @@ export default function ProductOptions({
             >
               {option.values.map((value, valueIndex) => (
                 <button
-                  key={value.id}
+                  key={value.slug}
                   type="button"
                   ref={(node) => {
-                    buttonRefs.current[`${option.id}:${value.id}`] = node;
+                    buttonRefs.current[`${option.slug}:${value.slug}`] = node;
                   }}
                   tabIndex={valueIndex === tabStopIndex ? 0 : -1}
-                  onClick={() => onOptionChange(option.id, value.id)}
-                  onKeyDown={(event) => handleGroupKeyDown(event, option.id, option.values)}
+                  onClick={() => onOptionChange(option.slug, value.slug)}
+                  onKeyDown={(event) => handleGroupKeyDown(event, option.slug, option.values)}
                   className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${
-                    selectedOptions[option.id] === value.id
+                    selectedOptions[option.slug] === value.slug
                       ? "border-caramel bg-caramel text-white"
                       : "border-cream text-cocoa hover:bg-cream"
                   }`}
                   role="radio"
-                  aria-checked={selectedOptions[option.id] === value.id}
+                  aria-checked={selectedOptions[option.slug] === value.slug}
                 >
                   {value.label}
                   {value.priceDelta > 0 && (

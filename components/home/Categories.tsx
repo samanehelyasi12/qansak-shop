@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { getAllCategories } from "@/data/categories";
+import type { Category } from "@/types/category";
 import Container from "@/components/ui/Container";
 
 function getVisibleCount(width: number) {
@@ -15,8 +15,12 @@ function getVisibleCount(width: number) {
   return 2.15;
 }
 
-export default function Categories() {
-  const categories = getAllCategories();
+/**
+ * The carousel is a client component for the sliding, but the categories
+ * themselves are fetched on the server and passed in, so the whole catalogue
+ * is not shipped to the browser just to draw this row.
+ */
+export default function Categories({ categories }: { categories: Category[] }) {
   const [visibleCount, setVisibleCount] = useState(7);
   const [currentIndex, setCurrentIndex] = useState(0);
 

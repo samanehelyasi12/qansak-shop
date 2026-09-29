@@ -1,12 +1,17 @@
 export interface ProductOption {
   id: string;
+  /** Slug the storefront addresses the option by, e.g. "size". */
+  slug: string;
   label: string;
   values: ProductOptionValue[];
 }
 
 export interface ProductOptionValue {
   id: string;
+  /** Slug the storefront addresses the choice by, e.g. "2kg". */
+  slug: string;
   label: string;
+  /** Display only. The server re-reads this before charging anyone. */
   priceDelta: number;
 }
 

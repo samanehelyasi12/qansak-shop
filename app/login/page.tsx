@@ -1,9 +1,9 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Container from "@/components/ui/Container";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import AuthForm from "@/components/auth/AuthForm";
 
 export const metadata: Metadata = {
   title: "ورود",
@@ -77,55 +77,22 @@ export default function LoginPage() {
                     </p>
                   </header>
 
-                  <form action="/login" method="POST" className="space-y-5">
-                    <Input
-                      name="identifier"
-                      label="ایمیل یا شماره موبایل"
-                      placeholder="email@example.com یا ۰۹۱۲۳۴۵۶۷۸۹"
-                      autoComplete="username"
-                      required
-                    />
+                  <Suspense
+                    fallback={
+                      <div className="h-64 animate-pulse rounded-2xl bg-cocoa/5" />
+                    }
+                  >
+                    <AuthForm mode="login" />
+                  </Suspense>
 
-                    <Input
-                      name="password"
-                      type="password"
-                      label="رمز عبور"
-                      placeholder="رمز عبور"
-                      autoComplete="current-password"
-                      required
-                    />
-
-                    <div className="flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-                      <label className="flex cursor-pointer items-center gap-2 text-cocoa/70">
-                        <input
-                          type="checkbox"
-                          name="remember"
-                          className="h-4 w-4 rounded border-cocoa/20 text-berry accent-berry"
-                        />
-
-                        <span>مرا به خاطر بسپار</span>
-                      </label>
-
-                      <Link
-                        href="/forgot-password"
-                        className="font-medium text-berry transition-colors hover:text-caramel"
-                      >
-                        فراموشی رمز عبور؟
-                      </Link>
-                    </div>
-
-                    <div className="relative pt-2">
-                      <div className="absolute inset-x-1 bottom-0 top-2 rounded-2xl bg-caramel/30" />
-
-                      <Button
-                        type="submit"
-                        size="lg"
-                        className="relative z-10 h-14 w-full rounded-2xl bg-berry text-base font-bold shadow-lg shadow-berry/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-berry/25 active:translate-y-1"
-                      >
-                        ورود به حساب
-                      </Button>
-                    </div>
-                  </form>
+                  <div className="mt-6 text-center">
+                    <Link
+                      href="/register"
+                      className="inline-block text-sm font-medium text-berry transition-colors hover:text-caramel"
+                    >
+                      حساب کاربری ندارید؟ ثبت‌نام کنید
+                    </Link>
+                  </div>
 
                   <div className="my-7 flex items-center gap-3">
                     <div className="h-px flex-1 bg-cocoa/10" />
